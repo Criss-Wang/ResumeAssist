@@ -3,7 +3,9 @@ build-backend = "setuptools.build_meta"
 requires = ["setuptools"]
 
 [project]
-authors = [{ name = "Zhenlin Wang (Criss)", email = "zhenlin.wang.criss@gmail.com" }]
+authors = [
+  { name = "Zhenlin Wang (Criss)", email = "zhenlin.wang.criss@gmail.com" },
+]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python :: 3.9",
