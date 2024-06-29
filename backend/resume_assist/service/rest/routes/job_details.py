@@ -22,10 +22,11 @@ def save_job_details(id: UUID, request: JobDetails):
             "company": request.company,
             "position": request.position,
             "description": request.description,
+            "url": request.url,
         }
         result = neo4j_client.query(query, parameters)
         if not result:
-            raise HTTPException(500, "Failed to save personal information")
+            raise HTTPException(500, "Failed to save Job details")
         return Response(status_code=200)
     except Exception as e:
         # logger.exception(e)
@@ -43,7 +44,7 @@ def get_job_details(id: UUID):
         parameters = {"id": str(id)}
         result = neo4j_client.query(query, parameters)
         if not result:
-            raise HTTPException(404, "Job information not found")
+            raise HTTPException(404, "Job details not found")
         job = result[0]["j"]
         return JobDetails(**job)
     except Exception as e:
