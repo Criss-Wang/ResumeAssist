@@ -5,8 +5,10 @@ class AddonRequest(BaseModel):
     pass
 
 
-class JobDetailsRequest(BaseModel):
-    pass
+class JobDetails(BaseModel):
+    company: str
+    position: str
+    description: str
 
 
 class PersonalInfoRequest(BaseModel):
@@ -30,10 +32,6 @@ class WorkRequest(BaseModel):
 
 
 class AddonResponse(BaseModel):
-    pass
-
-
-class JobDetailsResponse(BaseModel):
     pass
 
 

@@ -1,0 +1,11 @@
+- name: work_assist
+  engine: global
+  model: global
+  version: 1
+  system:
+    value: >
+      You'
+      
+  user:
+    value: >
+      

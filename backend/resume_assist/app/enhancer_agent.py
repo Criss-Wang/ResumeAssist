@@ -7,8 +7,6 @@ from resume_assist.functions import example_function
 
 logger = logging.getLogger(__name__)
 
-config = AppConfig()
-
 
 class EnhancerAgent(Agent):
     def __init__(self, name: str = None, init_message: str = None, engine: str = None):
