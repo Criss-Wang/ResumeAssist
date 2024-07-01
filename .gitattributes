@@ -1,4 +1,1 @@
-*.js linguist-detectable=false
-*.ts linguist-detectable=false
-*.jsx linguist-detectable=false
-*.tsx linguist-detectable=false
+ui/* linguist-detectable=false
