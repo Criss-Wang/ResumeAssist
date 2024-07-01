@@ -4,11 +4,12 @@
 <div>
   <h1 align="center">ResumeAssist: Your private resume guide </h1>
 <div>
-
+  
 ![build](https://github.com/criss-wang/dpai/workflows/build/badge.svg) 
 ![docs](https://github.com/criss-wang/dpai/workflows/docs/badge.svg) 
 ![lint](https://github.com/criss-wang/dpai/workflows/lint/badge.svg)
 [![codecov](https://codecov.io/gh/Criss-Wang/dpai/graph/badge.svg?token=D73VGZR7NN)](https://codecov.io/gh/Criss-Wang/dpai)
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![commit](https://img.shields.io/github/last-commit/criss-wang/dpai)](https://github.com/criss-wang/dpai/commits/master)
 
