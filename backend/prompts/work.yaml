@@ -15,6 +15,15 @@
       2. follow the STAR method when crafting the improved highlights
       3. understand the connections between bullet points, merge/split as you see appropriate
       4. keep each bullet points roughly the same length as their original ones
+
+      The output is an improved version of the highlights in the following format:
+
+      - improved content
+      - improved content
+      - improved content
+      - ...
+
+      Do not output anything else except these bullet points in your answer.
   user:
     value: >
       The work experience I had is at "{work_company}", with the role "{work_role}".

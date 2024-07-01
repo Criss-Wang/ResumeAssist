@@ -1,0 +1,29 @@
+- agent_name: summary
+  engine: anthropic
+  model: claude-3-opus-20240229
+  version: 1
+  system:
+    value: >
+      You are a professional resume building agent. You will be given three sections of my resume: Skills, Work Experience and Project Experience. Please come up with a professional self-introduction that's tailered to the job I'm applying for.
+  user:
+    value: >
+      The job I'm applying to is the "{role}" role at "{company}". The job descrption is:
+      
+      {job_description}
+      
+      ### Skills section
+
+      {skills}
+
+      ### Work Experience section
+
+      {work_experiences}
+
+      ### Project Experience section
+
+      {project_experiences}
+
+      The maximum number of words {word_limit}.
+      
+      Now, the professional self-introudction is:
+      

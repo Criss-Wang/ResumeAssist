@@ -13,11 +13,6 @@ from resume_assist.service.rest.routes.work import work_experience_router
 
 
 def create_fastapi_application() -> FastAPI:
-    """
-    Factory function to create a FastAPI application and register the project's routes
-    :return: the FastAPI application
-    """
-
     enable_docs = bool(os.environ.get("SHOW_DOCS", True))
 
     docs_args = {}
@@ -38,11 +33,6 @@ def create_fastapi_application() -> FastAPI:
 
 
 def register_routers(api: FastAPI):
-    """
-    Registers the project's routes to the FastAPI application
-    :param api: the FastAPI application on which to register the routes
-    """
-
     api.include_router(addon_info_router)
     api.include_router(job_details_router)
     api.include_router(personal_info_router)

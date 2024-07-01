@@ -12,6 +12,14 @@
       3. understand the connections between bullet points, merge/split as you see appropriate
       4. keep each bullet points roughly the same length as their original ones
       
+      The output is an improved version of the highlights in the following format:
+
+      - improved content
+      - improved content
+      - improved content
+      - ...
+
+      Do not output anything else except these bullet points in your answer.
   user:
     value: >
       The list of keywords are: {keywords}.

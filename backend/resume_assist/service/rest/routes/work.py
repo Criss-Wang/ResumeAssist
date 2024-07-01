@@ -3,10 +3,12 @@ from uuid import UUID
 
 from resume_assist.service.rest.data_model.resume_model import Work
 from resume_assist.io.db.engine import neo4j_client
-from resume_assist.app.enhancer_agent import EnhancerAgent
+from resume_assist.agent_hub.enhancer_agent import EnhancerAgent
 
 
-work_experience_router = APIRouter(prefix="/work-experience", tags=["resume"])
+work_experience_router = APIRouter(
+    prefix="/work-experience", tags=["Resume: Work Experience"]
+)
 
 
 @work_experience_router.post("/{id}/save")

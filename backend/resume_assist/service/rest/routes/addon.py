@@ -2,10 +2,10 @@ from fastapi import APIRouter, HTTPException
 from uuid import UUID
 
 from resume_assist.service.rest.data_model.resume_model import AddonInfo
-from resume_assist.app.enhancer_agent import EnhancerAgent
+from resume_assist.agent_hub.enhancer_agent import EnhancerAgent
 
 
-addon_info_router = APIRouter(prefix="/addon", tags=["resume"])
+addon_info_router = APIRouter(prefix="/addon", tags=["Resume: Addon Information"])
 
 
 @addon_info_router.post("/{id}")

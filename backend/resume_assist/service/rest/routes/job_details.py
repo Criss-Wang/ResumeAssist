@@ -2,11 +2,11 @@ from fastapi import APIRouter, HTTPException, Response
 from uuid import UUID
 
 from resume_assist.service.rest.data_model.resume_model import JobDetails
-from resume_assist.app.enhancer_agent import EnhancerAgent
+from resume_assist.agent_hub.enhancer_agent import EnhancerAgent
 from resume_assist.io.db.engine import neo4j_client
 
 
-job_details_router = APIRouter(prefix="/job-details", tags=["job"])
+job_details_router = APIRouter(prefix="/job-details", tags=["Job Details"])
 
 
 @job_details_router.post("/{id}")
