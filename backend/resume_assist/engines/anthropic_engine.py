@@ -16,9 +16,6 @@ class AnthropicEngine(BaseEngine):
                 ("human" if role == "user" else role, content)
                 for role, content in messages
             ]
-            import pdb
-
-            pdb.set_trace()
             response = self.model.invoke(messages)
             return response.content
         except Exception as e:
