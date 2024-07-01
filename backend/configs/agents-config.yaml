@@ -1,0 +1,10 @@
+enhancer:
+  engine_config:
+    engine_type: anthropic
+    model_name: claude-3-opus-20240229
+    model_params:
+      temperature: 0
+      max_tokens: 1024
+      top_p: 1
+  
+

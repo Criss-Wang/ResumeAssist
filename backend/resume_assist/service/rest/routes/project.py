@@ -1,40 +1,63 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request, Response
 from uuid import UUID
 
-from resume_assist.service.rest.data_model.resume_model import (
-    ProjectRequest,
-    ProjectResponse,
-)
+from resume_assist.service.rest.data_model.resume_model import Project
+from resume_assist.io.db.engine import neo4j_client
 from resume_assist.app.enhancer_agent import EnhancerAgent
 
 
 project_router = APIRouter(prefix="/project", tags=["resume"])
 
 
-@project_router.post("/{id}/save", response_model=ProjectResponse)
-def save_project(id: UUID, request: ProjectRequest):
+@project_router.post("/{id}/save")
+def save_project(id: UUID, request: Project):
     try:
-        pass
+        query = """
+        MERGE (pr:Project {id: $id})
+        SET 
+            pr.project_name = $project_name, 
+            pr.start_date = $start_date, 
+            pr.end_date = $end_date, 
+            pr.highlights = $highlights
+        RETURN pr
+        """
+        parameters = {"id": str(id), **request.model_dump()}
+        result = neo4j_client.query(query, parameters)
+        if not result:
+            raise HTTPException(500, "Failed to save personal information")
+        return Response(status_code=200)
     except Exception as e:
         # logger.exception(e)
         print(e)
         raise HTTPException(500, "Unexpected error")
 
 
-@project_router.get("/{id}", response_model=ProjectResponse)
+@project_router.get("/{id}", response_model=Project)
 def get_project(id: UUID):
     try:
-        pass
+        query = """
+        MATCH (pr:Project {id: $id})
+        RETURN pr
+        """
+        parameters = {"id": str(id)}
+        result = neo4j_client.query(query, parameters)
+        if not result:
+            raise HTTPException(404, "Personal Information not found")
+        project = result[0]["pr"]
+        return Project(**project)
     except Exception as e:
         # logger.exception(e)
         print(e)
         raise HTTPException(500, "Unexpected error")
 
 
-@project_router.post("/{id}/assist", response_model=ProjectResponse)
-def assist_project(id: UUID, request: ProjectRequest):
+@project_router.post("/assist")
+async def assist_project(request: Request):
     try:
-        pass
+        agent = EnhancerAgent("project")
+        info_vars = await request.json()
+        ai_assisted_highlights = agent.step(info_vars)
+        return ai_assisted_highlights
     except Exception as e:
         # logger.exception(e)
         print(e)

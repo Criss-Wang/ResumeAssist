@@ -1,16 +1,24 @@
 import logging
-from typing import List, Tuple
+from typing import Dict
 
-from resume_assist.agent.agent import Agent
-from resume_assist.app.config import AppConfig
+from resume_assist.agent_hub.base import Agent
 from resume_assist.functions import example_function
 
 logger = logging.getLogger(__name__)
 
 
 class EnhancerAgent(Agent):
-    def __init__(self, name: str = None, init_message: str = None, engine: str = None):
-        super().__init__(name, init_message, engine)
+    def step(self, input_vars: Dict) -> str:
+        """
+        Note: these messages can contain system messages, user messages and assistant messages
+        """
+        system_prompt = self.prompt.system.value
+        user_prompt = self.prompt.user.value
+        messages = [
+            ("system", system_prompt.format(**input_vars)),
+            ("user", user_prompt.format(**input_vars)),
+        ]
+        return self.engine.run_instruction(messages)
 
-    def run(self):
-        raise NotImplementedError
+    def get_agent_name(self):
+        return "enhancer"

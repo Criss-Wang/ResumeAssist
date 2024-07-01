@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from typing import List, Dict
 
 
-class AddonRequest(BaseModel):
+class AddonInfo(BaseModel):
     pass
 
 
@@ -23,8 +23,11 @@ class PersonalInfo(BaseModel):
     website: str = Field(default="")
 
 
-class ProjectRequest(BaseModel):
-    pass
+class Project(BaseModel):
+    project_name: str
+    start_date: str
+    end_date: str
+    highlights: List[str]
 
 
 class Intro(BaseModel):
@@ -36,25 +39,10 @@ class Skills(BaseModel):
     skill_mapping: Dict[str, List[str]]
 
 
-class WorkRequest(BaseModel):
-    pass
-
-
-class AddonResponse(BaseModel):
-    pass
-
-
-class ProjectResponse(BaseModel):
-    pass
-
-
-class IntroResponse(BaseModel):
-    pass
-
-
-class SkillsResponse(BaseModel):
-    pass
-
-
-class WorkResponse(BaseModel):
-    pass
+class Work(BaseModel):
+    company: str
+    location: str
+    role: str
+    start_date: str
+    end_date: str
+    highlights: List[str]

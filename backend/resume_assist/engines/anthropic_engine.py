@@ -12,8 +12,18 @@ class AnthropicEngine(BaseEngine):
 
     def run_instruction(self, messages: List):
         try:
+            messages = [
+                ("human" if role == "user" else role, content)
+                for role, content in messages
+            ]
+            import pdb
+
+            pdb.set_trace()
             response = self.model.invoke(messages)
             return response.content
         except Exception as e:
             print(e)
             raise e
+
+    def get_engine_str(self):
+        return "Anthropic"
