@@ -1,0 +1,56 @@
+
+
+<!-- PROJECT LOGO -->
+<div>
+  <h1 align="center">ResumeAssist: Your private resume guide </h1>
+<div>
+
+![build](https://github.com/criss-wang/dpai/workflows/build/badge.svg) 
+![docs](https://github.com/criss-wang/dpai/workflows/docs/badge.svg) 
+![lint](https://github.com/criss-wang/dpai/workflows/lint/badge.svg)
+[![codecov](https://codecov.io/gh/Criss-Wang/dpai/graph/badge.svg?token=D73VGZR7NN)](https://codecov.io/gh/Criss-Wang/dpai)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![commit](https://img.shields.io/github/last-commit/criss-wang/dpai)](https://github.com/criss-wang/dpai/commits/master)
+
+**Introducing ResumeAssist, an easy-to-deploy personal resume assistant with UNLIMITED AI suggestions.**
+
+
+## ⚡ Getting Started
+The easiest way to run ResumeAssist is inside a Docker container. It works with Linux, Mac OS, or WSL on Windows.
+
+To start ResumeAssist in a docker container, run the following commands in your terminal:
+
+```bash
+Docker command to come soon
+```
+
+## 💻 Tech Stack
+- **UI**: TypeScript, Next.js, React, Tailwind CSS, MateriaUI
+
+- **Backend**: Fastapi, Neo4j, Docker, 
+
+- **LLM**: LangChain, Jupyter, OpenAI
+
+## 🚀 Documentation
+
+TODO:
+- Class Diagram
+- Explanation of config-based agent architecture
+- Explanation of routes to use in the backend
+
+## 📈 Roadmap
+
+### Completed
+- Anthropic based LangChain engine
+- Config-based Agent system
+- Basic UI for Resume modification
+- Neo4j connection
+### In progress
+- Unit Testing
+- Linting
+- Integration Tests
+### Planned
+- Ollama based LangChain engines (True unlimited use)
+- Local Model (if GPU is available, may use quantized models)
+
+
