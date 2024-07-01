@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, HTTPException, Request, Response
 from uuid import UUID
 
 from resume_assist.service.rest.data_model.resume_model import Work
@@ -53,10 +53,13 @@ def get_work_experience(id: UUID):
         raise HTTPException(500, "Unexpected error")
 
 
-@work_experience_router.post("/{id}/assist", response_model=str)
-def assist_work_experience(id: UUID, request: str):
+@work_experience_router.post("/assist")
+async def assist_work_experience(request: Request):
     try:
-        pass
+        agent = EnhancerAgent("work")
+        info_vars = await request.json()
+        ai_assisted_highlights = agent.step(info_vars)
+        return ai_assisted_highlights
     except Exception as e:
         # logger.exception(e)
         print(e)
