@@ -39,7 +39,8 @@ TODO:
 - Explanation of routes to use in the backend
 
 ## 📈 Roadmap
-
+### Major updates
+- This is a renewed effort of my instruction-based resume assist which started after my Master's Degree. I decided to overhaul the repo, and replace the simple llm-call with a more flexible, multi-agent AI assistant system.
 ### Completed
 - Anthropic based LangChain engine
 - Config-based Agent system
