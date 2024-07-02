@@ -33,11 +33,18 @@ Docker command to come soon
 - **LLM**: LangChain, Jupyter, OpenAI
 
 ## 🚀 Documentation
+Prototyping... So far you may refer to the following:
+### Major Flow
+![](backend/docs/major_workflow.png)
 
-TODO:
-- Class Diagram
-- Explanation of config-based agent architecture
-- Explanation of routes to use in the backend
+### Main execution paths
+<P>
+  <img src="backend/docs/ai_assist_flow.png" width="600">
+</P>
+<p>
+  <img src="backend/docs/compilation.png" width="200">
+</P>
+
 
 ## 📈 Roadmap
 ### Major updates
