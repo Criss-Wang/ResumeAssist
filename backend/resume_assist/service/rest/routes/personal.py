@@ -3,7 +3,6 @@ from uuid import UUID
 
 from resume_assist.service.rest.data_model.resume_model import PersonalInfo
 from resume_assist.io.db.engine import neo4j_client
-from resume_assist.agent_hub.enhancer_agent import EnhancerAgent
 
 
 personal_info_router = APIRouter(

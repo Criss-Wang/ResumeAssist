@@ -1,0 +1,2 @@
+flake8-pyproject~=1.2.3
+pytest-cov==5.0.0

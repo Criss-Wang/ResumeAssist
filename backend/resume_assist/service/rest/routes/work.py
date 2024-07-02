@@ -61,6 +61,7 @@ async def assist_work_experience(request: Request):
         agent = EnhancerAgent("work")
         info_vars = await request.json()
         ai_assisted_highlights = agent.step(info_vars)
+
         return ai_assisted_highlights
     except Exception as e:
         # logger.exception(e)

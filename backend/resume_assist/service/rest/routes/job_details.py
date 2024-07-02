@@ -2,7 +2,6 @@ from fastapi import APIRouter, HTTPException, Response
 from uuid import UUID
 
 from resume_assist.service.rest.data_model.resume_model import JobDetails
-from resume_assist.agent_hub.enhancer_agent import EnhancerAgent
 from resume_assist.io.db.engine import neo4j_client
 
 
