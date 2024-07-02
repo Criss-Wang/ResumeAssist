@@ -9,10 +9,6 @@ TODO:
 3. Langfuse integration
 4. Setup cheaper inference engine
 5. testing
+6. Guardrail
 
-
-Set Job Details
-
-Set Personal Info -> Persist
-Set 
 
