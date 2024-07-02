@@ -1,30 +1,55 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Response
 from uuid import UUID
 
-from resume_assist.service.rest.data_model.resume_model import (
-    PersonalInfoRequest,
-    PersonalInfoResponse,
+from resume_assist.service.rest.data_model.resume_model import PersonalInfo
+from resume_assist.io.db.engine import neo4j_client
+from resume_assist.agent_hub.enhancer_agent import EnhancerAgent
+
+
+personal_info_router = APIRouter(
+    prefix="/personal-info", tags=["Resume: Personal Information"]
 )
-from resume_assist.app.enhancer_agent import EnhancerAgent
 
 
-personal_info_router = APIRouter(prefix="/personal-info", tags=["resume"])
-
-
-@personal_info_router.post("/{id}", response_model=PersonalInfoResponse)
-def save_personal_info(id: UUID, request: PersonalInfoRequest):
+@personal_info_router.post("/{id}")
+def save_personal_info(id: UUID, request: PersonalInfo):
     try:
-        pass
+        query = """
+        MERGE (pi:PersonalInfo {id: $id})
+        SET 
+            pi.first_name = $first_name, 
+            pi.last_name = $last_name, 
+            pi.email = $email, 
+            pi.phone = $phone,
+            pi.github = $github,
+            pi.linkedin = $linkedin,
+            pi.website = $website
+        RETURN pi
+        """
+        parameters = {"id": str(id), **request.model_dump()}
+        result = neo4j_client.query(query, parameters)
+        if not result:
+            raise HTTPException(500, "Failed to save personal information")
+        return Response(status_code=200)
     except Exception as e:
         # logger.exception(e)
         print(e)
         raise HTTPException(500, "Unexpected error")
 
 
-@personal_info_router.get("/{id}", response_model=PersonalInfoResponse)
+@personal_info_router.get("/{id}", response_model=PersonalInfo)
 def get_personal_info(id: UUID):
     try:
-        pass
+        query = """
+        MATCH (pi:PersonalInfo {id: $id})
+        RETURN pi
+        """
+        parameters = {"id": str(id)}
+        result = neo4j_client.query(query, parameters)
+        if not result:
+            raise HTTPException(404, "Personal Information not found")
+        personal_info = result[0]["pi"]
+        return PersonalInfo(**personal_info)
     except Exception as e:
         # logger.exception(e)
         print(e)

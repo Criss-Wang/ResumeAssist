@@ -29,6 +29,7 @@ export default function Home() {
               <SelfIntro/>
               <Experiences/>
               <Projects/>
+              
             </Paper>
           </Container>
         </div>
