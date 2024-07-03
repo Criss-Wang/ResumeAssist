@@ -11,7 +11,7 @@ def test_anthropic_engine_init(mock_chat_anthropic):
     engine = AnthropicEngine(model_params, model_name)
 
     mock_chat_anthropic.assert_called_once_with(
-        model=model_name, max_retries=3, **model_params
+        model_name=model_name, max_retries=3, **model_params
     )
     assert engine.get_model() == model_name
     assert engine.get_engine_str() == "Anthropic"
