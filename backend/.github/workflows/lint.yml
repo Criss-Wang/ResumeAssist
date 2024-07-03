@@ -18,8 +18,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependency
-        run: pip install flake8 mypy flake8-pyproject sqlalchemy
+        run: pip install flake8 mypy flake8-pyproject
       - name: Run flake8
-        run: flake8 resume_assist
+        run: flake8 resume_assist tests
       - name: Run mypy 
-        run: mypy resume_assist/
+        run: mypy resume_assist
