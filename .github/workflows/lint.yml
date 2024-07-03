@@ -20,6 +20,10 @@ jobs:
       - name: Install dependency
         run: pip install flake8 mypy flake8-pyproject
       - name: Run flake8
-        run: flake8 backend/resume_assist backend/tests
+        run: |
+          cd backend
+          python -m flake8 resume_assist tests
       - name: Run mypy 
-        run: mypy backend/resume_assist
+        run: |
+          cd backend
+          mypy resume_assist
