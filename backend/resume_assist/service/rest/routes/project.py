@@ -14,10 +14,10 @@ def save_project(id: UUID, request: Project):
     try:
         query = """
         MERGE (pr:Project {id: $id})
-        SET 
-            pr.project_name = $project_name, 
-            pr.start_date = $start_date, 
-            pr.end_date = $end_date, 
+        SET
+            pr.project_name = $project_name,
+            pr.start_date = $start_date,
+            pr.end_date = $end_date,
             pr.highlights = $highlights
         RETURN pr
         """

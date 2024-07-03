@@ -19,14 +19,14 @@ class MockPromptModel:
 def test_verify_prompt():
     prompt = MockPromptModel("agent1", 1, "engine1", "model1")
 
-    assert verify_prompt(prompt, "agent1", 1, "engine1", "model1") == True
-    assert verify_prompt(prompt, "agent1", 1, "engine1", "") == True
-    assert verify_prompt(prompt, "agent1", 1, "", "model1") == True
-    assert verify_prompt(prompt, "agent1", 1, "", "") == True
-    assert verify_prompt(prompt, "agent2", 1, "engine1", "model1") == False
-    assert verify_prompt(prompt, "agent1", 2, "engine1", "model1") == False
-    assert verify_prompt(prompt, "agent1", 1, "engine2", "model1") == False
-    assert verify_prompt(prompt, "agent1", 1, "engine1", "model2") == False
+    assert verify_prompt(prompt, "agent1", 1, "engine1", "model1") is True
+    assert verify_prompt(prompt, "agent1", 1, "engine1", "") is True
+    assert verify_prompt(prompt, "agent1", 1, "", "model1") is True
+    assert verify_prompt(prompt, "agent1", 1, "", "") is True
+    assert verify_prompt(prompt, "agent2", 1, "engine1", "model1") is False
+    assert verify_prompt(prompt, "agent1", 2, "engine1", "model1") is False
+    assert verify_prompt(prompt, "agent1", 1, "engine2", "model1") is False
+    assert verify_prompt(prompt, "agent1", 1, "engine1", "model2") is False
 
 
 @patch("builtins.open", new_callable=mock_open)

@@ -97,7 +97,7 @@ def test_assist_skills(client, mock_enhancer_agent):
         ],
     }
 
-    response = client.post(f"/skills/assist", json=test_data)
+    response = client.post("/skills/assist", json=test_data)
 
     assert response.status_code == 200
     assert response.json() == return_value

@@ -35,8 +35,16 @@ filterwarnings = ["ignore::DeprecationWarning"]
 testpaths = ["tests"]
 
 [tool.mypy]
-ignore_missing_imports = true
+python_version = "3.11"
 plugins = ["sqlalchemy.ext.mypy.plugin"]
+warn_unused_configs = true
+explicit_package_bases = true
+warn_unreachable = true
+ignore_missing_imports = true
+warn_redundant_casts = true
+no_implicit_optional = false
+check_untyped_defs = false
+strict_optional = false
 
 [tool.coverage.run]
 branch = true

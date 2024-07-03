@@ -13,7 +13,7 @@ def save_addon_info(id: UUID, request: AddonInfo):
     try:
         query = """
         MERGE (ao:AddonInfo {id: $id})
-        SET 
+        SET
             ao.keywords = $keywords
         RETURN ao
         """

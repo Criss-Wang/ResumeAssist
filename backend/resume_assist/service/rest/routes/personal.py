@@ -15,10 +15,10 @@ def save_personal_info(id: UUID, request: PersonalInfo):
     try:
         query = """
         MERGE (pi:PersonalInfo {id: $id})
-        SET 
-            pi.first_name = $first_name, 
-            pi.last_name = $last_name, 
-            pi.email = $email, 
+        SET
+            pi.first_name = $first_name,
+            pi.last_name = $last_name,
+            pi.email = $email,
             pi.phone = $phone,
             pi.github = $github,
             pi.linkedin = $linkedin,

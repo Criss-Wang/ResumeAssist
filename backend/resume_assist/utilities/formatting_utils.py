@@ -27,14 +27,14 @@ def parse_skill_pts(text: str) -> List[str]:
     return skills_list
 
 
-def build_skills_str(skills: Dict) -> str:
-    skills = "\n".join(
+def build_skills_str(skills: Dict[str, List]) -> str:
+    skills_str = "\n".join(
         [
             "- " + category + ": " + ", ".join(skill_list)
             for category, skill_list in skills.items()
         ]
     )
-    return skills
+    return skills_str
 
 
 def build_work_str(work: List) -> str:

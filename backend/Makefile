@@ -32,7 +32,8 @@ update_env:
 	export $(grep -v '^#' .env | xargs -0)
 
 lint:
-	python -m flake8 cre tests
+	python -m flake8 resume_assist tests
+	mypy resume_assist
 
 kill_k:
 	ps aux | grep -i kubectl | grep -v grep | awk {'print $$2'} | xargs kill

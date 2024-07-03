@@ -72,4 +72,4 @@ def test_enhancer_agent_get_agent_name():
 
 def test_enhancer_agent_no_prompt():
     agent = EnhancerAgent(task_name="work", use_prompt=False, prompt_version=1)
-    assert agent.prompt == None
+    assert agent.prompt is None
