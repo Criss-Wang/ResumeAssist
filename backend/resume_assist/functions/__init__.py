@@ -1,5 +1,5 @@
-from .example_function import example_function
+from .linkedin_api import linkedin_get_keyword
 
 __all__ = [
-    "example_function",
+    "linkedin_get_keyword",
 ]

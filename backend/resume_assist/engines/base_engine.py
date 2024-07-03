@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List
+from typing import Any, Dict, List
 
 
 class BaseEngine(ABC):
@@ -15,7 +15,7 @@ class BaseEngine(ABC):
         return self.model_name
 
     def get_engine_str(self):
-        pass
+        raise NotImplementedError
 
     def run_instruction(self, messages: List):
-        pass
+        raise NotImplementedError

@@ -2,9 +2,9 @@
 start
 split
     :edit job details;
-    if (summarize?) is (<color:red>red) then
+    if (summarize?) is (yesd) then
         :Summarization;
-        :KB search;
+        :Store to KB;
     endif
     :persist;
 split again
@@ -12,19 +12,19 @@ split again
     :persist;
 split again
     :edit work experience;
-    if (ai assist?) is (<color:red>red) then
+    if (ai assist?) is (yes) then
         :AI-based Enhancement;
     endif
     :persist;
 split again
     :edit project experience;
-    if (summarize?) is (<color:red>red) then
+    if (ai assist?) is (yes) then
         :AI-based Enhancement;
     endif
     :persist;
 split again
     :edit skills;
-    if (summarize?) is (<color:red>red) then
+    if (ai assist?) is (yes) then
         :AI-based Enhancement;
     endif
     :persist;

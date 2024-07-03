@@ -1,3 +1,5 @@
+from typing import Optional
+
 from resume_assist.engines.factories import load_engine
 from resume_assist.utilities.prompt_utils import load_prompt
 from resume_assist.utilities.config_utils import load_agent_config
@@ -15,7 +17,8 @@ class Agent:
     def __init__(
         self, task_name: str, use_prompt: bool = True, prompt_version: int = 1
     ):
-        self.task_name = task_name
+        self.task_name: str = task_name
+        self.prompt: Optional[PromptModel]
 
         # load basic agent configurations
         self.config = load_agent_config(self.get_agent_name())
@@ -43,5 +46,5 @@ class Agent:
         model = engine_config.model_name
         return load_prompt(section_name, agent_name, version, engine, model)
 
-    def get_agent_name():
+    def get_agent_name(self):
         raise NotImplementedError

@@ -1,4 +1,4 @@
-import yaml
+import yaml  # type: ignore[import-untyped]
 
 from resume_assist.app.config import AgentConfig
 

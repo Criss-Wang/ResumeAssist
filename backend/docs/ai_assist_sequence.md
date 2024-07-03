@@ -1,4 +1,11 @@
 @startuml
+title
+ Agent-based AI Assist Workflow
+end title
+
+state Request {
+}
+
 state fork_state <<fork>>
 state KeywordExtractionAgent {
     state NER {
@@ -9,20 +16,20 @@ state KeywordExtractionAgent {
 NER -> Filter
 NER: From job summary
 Filter: Top K
-[*] --> fork_state
+Request --> fork_state
 
 state RetrievalAgent{
     state Embed {
     }
-    state Rank {
+    state Ranking {
     }
     state CrudeFilter {
     }
     state FineFilter ##[dotted]{
     }
 }
-Embed -> Rank
-Rank -> CrudeFilter
+Embed -> Ranking
+Ranking -> CrudeFilter
 CrudeFilter --> FineFilter: Optional
 
 Embed: From job summary and/or input
@@ -53,5 +60,5 @@ Engine: LangChain-based Inference
 join_state --> EnhancerAgent: All contexts
 EnhancerAgent --> ReviewerAgent
 ReviewerAgent --> join_state: Failed. Review provided.
-ReviewerAgent --> [*]: Passed
+ReviewerAgent --> Response: Passed
 @enduml

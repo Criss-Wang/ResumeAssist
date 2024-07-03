@@ -3,7 +3,6 @@ from uuid import UUID
 
 from resume_assist.service.rest.data_model.resume_model import PersonalInfo
 from resume_assist.io.db.engine import neo4j_client
-from resume_assist.agent_hub.enhancer_agent import EnhancerAgent
 
 
 personal_info_router = APIRouter(
@@ -16,10 +15,10 @@ def save_personal_info(id: UUID, request: PersonalInfo):
     try:
         query = """
         MERGE (pi:PersonalInfo {id: $id})
-        SET 
-            pi.first_name = $first_name, 
-            pi.last_name = $last_name, 
-            pi.email = $email, 
+        SET
+            pi.first_name = $first_name,
+            pi.last_name = $last_name,
+            pi.email = $email,
             pi.phone = $phone,
             pi.github = $github,
             pi.linkedin = $linkedin,

@@ -3,7 +3,7 @@ from typing import List, Dict
 
 
 class AddonInfo(BaseModel):
-    pass
+    keywords: List[str]
 
 
 class JobDetails(BaseModel):

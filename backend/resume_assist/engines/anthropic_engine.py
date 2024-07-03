@@ -8,7 +8,7 @@ class AnthropicEngine(BaseEngine):
     def init_model(self, model_params: Dict, model_name: str):
         if "claude" not in model_name:
             raise ValueError("invalid model")
-        return ChatAnthropic(model=model_name, max_retries=3, **model_params)
+        return ChatAnthropic(model_name=model_name, max_retries=3, **model_params)
 
     def run_instruction(self, messages: List):
         try:

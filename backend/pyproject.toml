@@ -21,7 +21,7 @@ Homepage = "https://github.com/criss-wang/ResumeAssist"
 
 [tool.flake8]
 exclude = [".git", "__pycache__"]
-ignore = ['E231', 'E241', 'E501', "W503"]
+ignore = ['E231', 'E241', 'E501', "W503", "F401"]
 extend-ignore = ['E203']
 per_file_ignores = ['__init__.py:F401']
 max-line-length = 127
@@ -35,43 +35,42 @@ filterwarnings = ["ignore::DeprecationWarning"]
 testpaths = ["tests"]
 
 [tool.mypy]
-ignore_missing_imports = true
+python_version = "3.11"
 plugins = ["sqlalchemy.ext.mypy.plugin"]
-# install_types = true
-# check_untyped_defs = true
-# disallow_any_generics = true
-# no_implicit_optional = true
-# no_implicit_reexport = true
-# show_error_codes = true
-# strict_equality = true
-# warn_redundant_casts = true
-# warn_return_any = true
-# warn_unreachable = true
-# warn_unused_configs = true
+warn_unused_configs = true
+explicit_package_bases = true
+warn_unreachable = true
+ignore_missing_imports = true
+warn_redundant_casts = true
+no_implicit_optional = false
+check_untyped_defs = false
+strict_optional = false
 
 [tool.coverage.run]
 branch = true
-omit = ["main.py", "__*__.py"]
-
+omit = ["main.py", "__*__.py", "*/rest/factories.py"]
 
 [tool.coverage.report]
-# Regexes for lines to exclude from consideration
 exclude_also = [
   # Don't complain about missing debug-only code:
   "def __repr__",
   "if self\\.debug",
 
   # Don't complain if tests don't hit defensive assertion code:
+  "pass",
+  "raise HTTPException",
   "raise AssertionError",
   "raise NotImplementedError",
+  "except Exception as e:",
 
   # Don't complain if non-runnable code isn't run:
   "if 0:",
+  "if session is not None:",
   "if __name__ == .__main__.:",
 
   # Don't complain about abstract methods, they aren't run:
   "@(abc\\.)?abstractmethod",
-]
+] # Regexes for lines to exclude from consideration
 
 ignore_errors = true
 

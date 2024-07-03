@@ -1,7 +1,7 @@
 import json
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, HTTPException, Request, Response
 
 from resume_assist.service.rest.data_model.resume_model import Skills
 from resume_assist.io.db.engine import neo4j_client
@@ -56,10 +56,13 @@ def get_skills(id: UUID):
         raise HTTPException(500, "Unexpected error")
 
 
-@skills_router.post("/{id}/assist", response_model=Skills)
-def assist_skills(id: UUID, request: Skills):
+@skills_router.post("/assist")
+async def assist_skills(request: Request):
     try:
-        pass
+        agent = EnhancerAgent("skills")
+        info_vars = await request.json()
+        ai_assisted_skills = agent.step(info_vars)
+        return ai_assisted_skills
     except Exception as e:
         # logger.exception(e)
         print(e)

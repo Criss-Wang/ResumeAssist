@@ -16,12 +16,12 @@ def save_work_experience(id: UUID, request: Work):
     try:
         query = """
         MERGE (w:Work {id: $id})
-        SET 
-            w.company = $company, 
-            w.location = $location, 
-            w.role = $role, 
-            w.start_date = $start_date, 
-            w.end_date = $end_date, 
+        SET
+            w.company = $company,
+            w.location = $location,
+            w.role = $role,
+            w.start_date = $start_date,
+            w.end_date = $end_date,
             w.highlights = $highlights
         RETURN w
         """
@@ -61,6 +61,7 @@ async def assist_work_experience(request: Request):
         agent = EnhancerAgent("work")
         info_vars = await request.json()
         ai_assisted_highlights = agent.step(info_vars)
+
         return ai_assisted_highlights
     except Exception as e:
         # logger.exception(e)

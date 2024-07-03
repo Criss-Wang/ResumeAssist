@@ -2,8 +2,10 @@ import logging
 from typing import Dict
 
 from resume_assist.agent_hub.base import Agent
-from resume_assist.functions import example_function
-from resume_assist.utilities.formatting_utils import parse_to_bullet_pts
+from resume_assist.utilities.formatting_utils import (
+    parse_to_bullet_pts,
+    parse_skill_pts,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +22,8 @@ class EnhancerAgent(Agent):
             ("user", user_prompt.format(**input_vars)),
         ]
         output = self.engine.run_instruction(messages)
+        if "skill" in self.task_name:
+            return parse_skill_pts(output)
         return parse_to_bullet_pts(output)
 
     def get_agent_name(self):
