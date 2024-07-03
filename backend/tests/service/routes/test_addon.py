@@ -4,7 +4,6 @@ from unittest.mock import patch
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from resume_assist.service.rest.routes.addon import addon_info_router
-from resume_assist.io.db.engine import neo4j_client
 
 
 @pytest.fixture
