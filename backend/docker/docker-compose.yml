@@ -9,6 +9,7 @@ services:
       - "7687:7687"
     environment:
       NEO4J_AUTH: "neo4j/neo4j_password"
+      NEO4J_PLUGINS: '["graph-data-science"]'
     volumes:
       - neo4j_data:/data
 
