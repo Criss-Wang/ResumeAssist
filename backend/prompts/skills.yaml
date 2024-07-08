@@ -36,3 +36,29 @@
       
       Now, the improved skills section is:
       
+
+- agent_name: keyword_extractor
+  engine: anthropic
+  model: claude-3-opus-20240229
+  version: 1
+  system:
+    value: >
+      You are to perform the Named Entity Recognition task for a job summary to identify job keywords that may help with the "Skill" section in a resume for a specific tech job application. Follow the instruction below to produce the output:
+
+      1. Identify the role and the company, use them as context for the keyword extraction
+      2. Extract a crude list of keywords from the job description that may help job applicant come up with a better set of skills in the resume.
+      3. Refine the list by understanding the intention of hiring, job expectation and the relevant technical details. Note that this is a filtering step so no rephrasing is needed.
+      4. Output the finalized list in the form below:
+      
+      - keyword1
+      - keyword2
+      - keyword3
+      ...
+  user:
+    value: >
+      The job descrption is:
+      
+      {job_description}
+      
+      Now, the extracted keywords are:
+      

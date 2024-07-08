@@ -1,5 +1,5 @@
 import logging
-from typing import Dict
+from typing import Dict, List
 
 from resume_assist.agent_hub.base import Agent
 from resume_assist.utilities.formatting_utils import (
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class SummaryAgent(Agent):
-    def step(self, input_vars: Dict) -> list[str]:
+    def step(self, input_vars: Dict) -> List[str]:
         """
         Note: these messages can contain system messages, user messages and assistant messages
         """

@@ -1,5 +1,5 @@
+from typing import List, Dict, Literal, Optional
 from pydantic import BaseModel, Field
-from typing import List, Dict
 
 
 class AddonInfo(BaseModel):
@@ -46,3 +46,20 @@ class Work(BaseModel):
     start_date: str
     end_date: str
     highlights: List[str]
+
+
+class Resume(BaseModel):
+    job_details: JobDetails
+    personal_info: PersonalInfo
+    intro: Intro
+    skills: Skills
+    works: List[Work]
+    projects: List[Project]
+    addon_info: Optional[AddonInfo] = Field(default=None)
+
+
+class ResumeRequest(BaseModel):
+    job_details: JobDetails
+    work_ids: List[str]
+    project_ids: List[str]
+    label: Literal["success", "fail", "unlabeled"] = Field(default="unlabeled")

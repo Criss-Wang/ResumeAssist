@@ -4,14 +4,18 @@ from typing import Dict, List
 from resume_assist.agent_hub.base import Agent
 from resume_assist.utilities.formatting_utils import (
     parse_to_bullet_pts,
-    parse_skill_pts,
 )
 
 logger = logging.getLogger(__name__)
 
 
-class EnhancerAgent(Agent):
-    def step(self, input_vars: Dict) -> List[str]:
+class KeywordExtractionAgent(Agent):
+    def extract_keywords(self, job_description: str, limit: int = 5) -> List[str]:
+        keywords = self.ner_step({"job_description": job_description})
+        keywords = self.filter(keywords, limit)
+        return keywords
+
+    def ner_step(self, input_vars: Dict) -> List[str]:
         """
         Note: these messages can contain system messages, user messages and assistant messages
         """
@@ -22,9 +26,11 @@ class EnhancerAgent(Agent):
             ("user", user_prompt.format(**input_vars)),
         ]
         output = self.engine.run_instruction(messages)
-        if "skill" in self.task_name:
-            return parse_skill_pts(output)
         return parse_to_bullet_pts(output)
 
+    def filter(self, keywords: List[str], limit: int) -> List[str]:
+        # TODO: use function calling to achieve robust filtering logic
+        return keywords[:limit]
+
     def get_agent_name(self):
-        return "enhancer"
+        return "keyword_extractor"
