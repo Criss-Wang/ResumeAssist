@@ -20,7 +20,7 @@ def save_resume(id: UUID, request: ResumeRequest):
         query = """
         MERGE (r:Resume {id: $id})
         SET r.embedding = $embedding
-        
+
         WITH r
         MATCH (ao:AddonInfo {id: $id})
         SET ao.embedding = $embedding
@@ -103,7 +103,7 @@ def get_resume(id: UUID):
         OPTIONAL MATCH (r)-[:HAS_PROJECT]->(pr:Project)
         OPTIONAL MATCH (r)-[:HAS_WORK]->(w:Work)
         RETURN r, addon_info, job_details, personal_info, intro, skills,
-            COLLECT(DISTINCT pr) as projects, 
+            COLLECT(DISTINCT pr) as projects,
             COLLECT(DISTINCT w) as works
         """
         parameters = {"id": str(id)}

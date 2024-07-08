@@ -1,9 +1,9 @@
 from typing import List, Dict, Tuple, Any, Callable
 
 
-def parse_grading_details(text: str) -> Tuple[Any]:
-    grade, remark = text.split("-" * 10)
-    grade = int(grade.strip("\n"))
+def parse_grading_details(text: str) -> Tuple[int, str]:
+    grade_str, remark = text.split("-" * 10)
+    grade = int(grade_str.strip("\n"))
     return grade, remark.strip("\n")
 
 
@@ -82,9 +82,6 @@ def build_highlight_str(chunk: Any) -> str:
 
 
 def build_reference_chunks_str(chunks: List[str], chunk_parser: Callable) -> str:
-    import pdb
-
-    pdb.set_trace()
     s = "<Examples>\nHere are a list of examples of highlights that may be relevant to this job, use them as references points if necessary.\n\n"
     s += "----------\n\n".join(
         [f"Example {i+1}: \n{chunk_parser(chunk)}\n" for i, chunk in enumerate(chunks)]
@@ -95,8 +92,8 @@ def build_reference_chunks_str(chunks: List[str], chunk_parser: Callable) -> str
 
 def build_previous_attempt_str(attempt_body: List[str], remark: str) -> str:
     s = "Here is a previous attempt to improve this highlight that failed. Learn from the remark and try to create a bettern one if possible:\n"
-    attempt_body = "\n".join(["- " + ele for ele in attempt_body])
-    s += f"<PreviousAttempt>\n{attempt_body}"
+    attemp_body_str = "\n".join(["- " + ele for ele in attempt_body])
+    s += f"<PreviousAttempt>\n{attemp_body_str}"
     s += "\n</PreviousAttempt>\n\n"
     s += f"<Remark>\n{remark}\n</Remark>"
     return s

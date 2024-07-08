@@ -18,9 +18,7 @@ TODO:
 
 
 Steps:
-- Complete RetrievalAgent
-- Testing + Linting
-- Update enhancer agent logic with chunks provided
-- [If free] Complete prompt optimization
+- Testing + Linting (Monday if any)
+- Complete prompt optimization (Tuesday)
 - Enable modification-based graph relationship (section modified from xxx)
 

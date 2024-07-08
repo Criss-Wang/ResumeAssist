@@ -15,7 +15,7 @@ class RetrievalAgent(Agent):
         node_type: str,
         max_chunk_size: int = 5,
         refined_filter: bool = True,
-    ) -> List[str] | str:
+    ) -> List[str]:
         """job-summary based retreival"""
         chunks = self.step(indexer_txt, node_type)
         reranked_chunks = self.rerank(chunks)

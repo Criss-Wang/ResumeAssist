@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class SummaryAgent(Agent):
-    def step(self, input_vars: Dict) -> List[str]:
+    def step(self, input_vars: Dict) -> str:
         """
         Note: these messages can contain system messages, user messages and assistant messages
         """

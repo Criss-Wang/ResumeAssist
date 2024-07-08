@@ -23,7 +23,7 @@ class ReviewerAgent(Agent):
         )
         return content_grade, reviewer_remark
 
-    def grade(self, input_vars: Dict) -> List[str]:
+    def grade(self, input_vars: Dict) -> Tuple[int, str]:
         """
         Note: these messages can contain system messages, user messages and assistant messages
         """
