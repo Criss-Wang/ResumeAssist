@@ -6,7 +6,7 @@ from resume_assist.utilities.formatting_utils import parse_to_bullet_pts
 
 @pytest.fixture
 def agent():
-    agent = KeywordExtractionAgent("Project")
+    agent = KeywordExtractionAgent("project")
     agent.prompt = Mock()
     agent.prompt.system.value = "System: {job_description}"
     agent.prompt.user.value = "User: {job_description}"
