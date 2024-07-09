@@ -18,7 +18,5 @@ TODO:
 
 
 Steps:
-- Testing + Linting (Monday if any)
-- Complete prompt optimization (Tuesday)
 - Enable modification-based graph relationship (section modified from xxx)
 
