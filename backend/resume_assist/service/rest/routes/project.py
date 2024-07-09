@@ -105,7 +105,7 @@ async def assist_project(request: Request):
             )
             if grade >= 8:
                 break
-            if num_retries > 3:
+            if num_retries >= 3:
                 print(
                     "Warning: The optimized version fails to pass AI reviewer, use at your own discretion."
                 )

@@ -36,8 +36,7 @@ def build_full_job_description(company: str, role: str, description: str) -> str
 ----------
 Role: {role}
 ----------
-Job Description: {description}
-"""
+Job Description: {description}"""
 
 
 def build_skills_str(skills: Dict[str, List]) -> str:
@@ -83,7 +82,8 @@ def build_highlight_str(chunk: Any) -> str:
 
 def build_reference_chunks_str(chunks: List[str], chunk_parser: Callable) -> str:
     s = "<Examples>\nHere are a list of examples of highlights that may be relevant to this job, use them as references points if necessary.\n\n"
-    s += "----------\n\n".join(
+    s += "----------\n"
+    s += "----------\n".join(
         [f"Example {i+1}: \n{chunk_parser(chunk)}\n" for i, chunk in enumerate(chunks)]
     )
     s += "\n</Examples>"
@@ -96,4 +96,5 @@ def build_previous_attempt_str(attempt_body: List[str], remark: str) -> str:
     s += f"<PreviousAttempt>\n{attemp_body_str}"
     s += "\n</PreviousAttempt>\n\n"
     s += f"<Remark>\n{remark}\n</Remark>"
+
     return s

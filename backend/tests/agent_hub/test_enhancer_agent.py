@@ -1,7 +1,6 @@
 from unittest.mock import patch, MagicMock
 from resume_assist.agent_hub.enhancer_agent import EnhancerAgent
 from resume_assist.engines.base_engine import BaseEngine
-from resume_assist.app.config import PromptModel
 
 
 @patch("resume_assist.agent_hub.base.load_agent_config")

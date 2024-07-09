@@ -81,6 +81,7 @@ def save_resume(id: UUID, request: ResumeRequest):
             "label": request.label,
         }
         result = neo4j_client.query(query, parameters)
+
         if not result:
             raise HTTPException(500, "Failed to save resume with relationships built")
         return Response(status_code=200)

@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Tuple, Any
+from typing import List
 
 from resume_assist.agent_hub.base import Agent
 from resume_assist.io.db.engine import neo4j_client
@@ -22,7 +22,7 @@ class RetrievalAgent(Agent):
         filtered_chunks = self.crude_filtering(reranked_chunks, max_chunk_size)
         if refined_filter:
             filtered_chunks = self.refined_filtering(filtered_chunks)
-        return [chunk[0] for chunk in filtered_chunks]
+        return [chunk for chunk in filtered_chunks]
 
     def step(self, indexer_str: str, node_type: str) -> List:
         indexer_embedding = get_indexer_embedding([indexer_str])[0]

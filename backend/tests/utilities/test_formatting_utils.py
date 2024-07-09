@@ -1,11 +1,29 @@
 import pytest
 from resume_assist.utilities.formatting_utils import (
+    parse_grading_details,
     parse_to_bullet_pts,
     parse_skill_pts,
+    build_full_job_description,
     build_skills_str,
     build_work_str,
     build_project_str,
+    build_highlight_str,
+    build_reference_chunks_str,
+    build_previous_attempt_str,
 )
+
+
+def test_parse_grading_details():
+    text = "85\n----------\nGood work overall."
+    expected_output = (85, "Good work overall.")
+    assert parse_grading_details(text) == expected_output
+
+    text = "70\n----------\nNeeds improvement."
+    expected_output = (70, "Needs improvement.")
+    assert parse_grading_details(text) == expected_output
+
+    with pytest.raises(ValueError):
+        parse_grading_details("Invalid format")
 
 
 def test_parse_to_bullet_pts():
@@ -40,6 +58,20 @@ def test_parse_skill_pts():
 
     # Assert the result matches the expected output
     assert result == expected_output
+
+
+def test_build_full_job_description():
+    company = "ABC Corp"
+    role = "Software Engineer"
+    description = "Develop and maintain software."
+    expected_output = (
+        "Company: ABC Corp\n"
+        "----------\n"
+        "Role: Software Engineer\n"
+        "----------\n"
+        "Job Description: Develop and maintain software."
+    )
+    assert build_full_job_description(company, role, description) == expected_output
 
 
 def test_build_skills_str():
@@ -114,3 +146,42 @@ def test_build_project_str():
     projects = []
     expected_output = ""
     assert build_project_str(projects) == expected_output
+
+
+def test_build_highlight_str():
+    chunk = {"highlights": ["Achieved X", "Implemented Y"]}
+    expected_output = "- Achieved X\n- Implemented Y"
+    assert build_highlight_str(chunk) == expected_output
+
+    chunk = {"highlights": []}
+    expected_output = ""
+    assert build_highlight_str(chunk) == expected_output
+
+
+def test_build_reference_chunks_str():
+    chunks = [
+        {"highlights": ["Highlight 1", "Highlight 2"]},
+        {"highlights": ["Highlight A", "Highlight B"]},
+    ]
+    expected_output = (
+        "<Examples>\nHere are a list of examples of highlights that may be relevant to this job, use them as references points if necessary.\n\n"
+        "----------\nExample 1: \n- Highlight 1\n- Highlight 2\n"
+        "----------\n"
+        "Example 2: \n- Highlight A\n- Highlight B\n\n"
+        "</Examples>"
+    )
+    assert build_reference_chunks_str(chunks, build_highlight_str) == expected_output
+
+
+def test_build_previous_attempt_str():
+    attempt_body = ["Attempted improvement 1", "Attempted improvement 2"]
+    remark = "Needs more work."
+    expected_output = (
+        "Here is a previous attempt to improve this highlight that failed. Learn from the remark and try to create a bettern one if possible:\n"
+        "<PreviousAttempt>\n"
+        "- Attempted improvement 1\n"
+        "- Attempted improvement 2\n"
+        "</PreviousAttempt>\n\n"
+        "<Remark>\nNeeds more work.\n</Remark>"
+    )
+    assert build_previous_attempt_str(attempt_body, remark) == expected_output
