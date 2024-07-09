@@ -1,0 +1,15 @@
+- agent_name: summary
+  engine: anthropic
+  model: claude-3-opus-20240229
+  version: 1
+  system:
+    value: >
+      You are a summarization agent. You will be given a tech role in a company with a specific job description. Your task is to summarize the job description in 100 words. Make sure to pay attention to job scope, job requirements, skillsets and keywords that encapsulate what HR is looking for when filtering for strong candidates.
+  user:
+    value: >
+      The job I'm applying to is the "{role}" role at "{company}". The job descrption is:
+      
+      {job_description}
+      
+      Now, the job summary is:
+      

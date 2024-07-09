@@ -28,9 +28,6 @@ test:
 
 docs:
 
-update_env:
-	export $(grep -v '^#' .env | xargs -0)
-
 lint:
 	python -m flake8 resume_assist tests
 	mypy resume_assist
