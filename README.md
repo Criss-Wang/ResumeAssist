@@ -52,12 +52,14 @@ Prototyping... So far you may refer to the following:
 - Anthropic based LangChain engine
 - Config-based Agent system
 - Basic UI for Resume modification
-- Neo4j connection
-### In progress
 - Unit Testing
 - Linting
-- Integration Tests
+- Neo4j connection
+### In progress
+- CV Rendering
+- Integration (Frontend & Backend)
 ### Planned
+- Make UI look better
 - Ollama based LangChain engines (True unlimited use)
 - Local Model (if GPU is available, may use quantized models)
 
