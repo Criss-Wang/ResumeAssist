@@ -4,7 +4,7 @@ import { TextField, Typography, Box } from '@mui/material';
 export default function Researches({ onResumeChange, resume }) {
     return (
         <Box className="mb-6">
-            <Typography variant="h6" className="mb-2">Background</Typography>
+            <Typography variant="h6" className="mb-2">Publications</Typography>
             <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col space-y-4">
                 <TextField label="Name" variant="outlined" fullWidth />
