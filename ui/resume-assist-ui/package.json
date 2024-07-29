@@ -20,6 +20,7 @@
     "next": "14.2.4",
     "pdfjs-dist": "^3.11.174",
     "react": "^18",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18",
     "yarn": "^1.22.22"
   },

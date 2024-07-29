@@ -1,67 +1,259 @@
-'use client';
-import { useState } from 'react';
-import { TextField, Typography, Box, Chip, Button, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
+import React, { useState } from 'react';
+import { Box, Button, TextField, Typography, IconButton, Menu, MenuItem, Paper } from '@mui/material';
+import { Add, Edit, Delete } from '@mui/icons-material';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+
+interface Skill {
+  catName: string;
+  name: string;
+}
+
+interface Category {
+  name: string;
+  skills: Skill[];
+}
 
 export default function Skills({ onResumeChange, resume, job }) {
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [currentCategoryId, setCurrentCategoryId] = useState<string | null>(null);
+    const [editCategoryMode, setEditCategoryMode] = useState<{ categoryId: string | null } | null>(null);
+    const [editSkillMode, setEditSkillMode] = useState<{ catName: string | null, skillName: string | null } | null>(null);
+    const [newCategoryName, setNewCategoryName] = useState<string | null>(null);
+    const [newSkillName, setNewSkillName] = useState<string | null>(null);
 
-    const [skills, setSkills] = useState([[], [], []]);
-    const [newSkill, setNewSkill] = useState(['', '', '']);
 
-    const handleAddSkill = (index: number) => {
-        if (newSkill[index].trim() !== '') {
-          const updatedSkills = [...skills];
-          updatedSkills[index].push(newSkill[index].trim());
-          setSkills(updatedSkills);
-          setNewSkill(['', '', '']);
-        }
+    const handleAddCategory = () => {
+        setCategories([...categories, { name: `New Category ${categories.length + 1}`, skills: [] }]);
     };
-    
-    const handleRemoveSkill = (index, skillIndex) => {
-        const updatedSkills = [...skills];
-        updatedSkills[index].splice(skillIndex, 1);
-        setSkills(updatedSkills);
+
+    const handleDeleteCategory = (catName: string) => {
+        setCategories(categories.filter(cat => cat.name !== catName));
     };
+
+    const handleEditCategoryName = (catName: string, newName: string) => {
+        setCategories(categories.map(cat => cat.name === catName ? { ...cat, name: newName } : cat));
+        setEditCategoryMode(null);
+        setNewCategoryName(null);
+    };
+
+    const handleAddSkill = (catName: string, skillName: string) => {
+        const newSkill = { name: skillName, catName: catName };
+        setCategories(categories.map(cat => cat.name === catName ? { ...cat, skills: [...cat.skills, newSkill] } : cat));
+    };
+
+    const handleDeleteSkill = (catName: string, skillName: string) => {
+        setCategories(categories.map(cat => cat.name === catName ? { ...cat, skills: cat.skills.filter(skill => skill.name !== skillName) } : cat));
+    };
+
+    const handleEditSkillName = (catName: string, oldName: string, newName: string) => {
+        console.log(catName, oldName, newName)
+        setCategories(categories.map(cat => cat.name === catName ? {
+            ...cat,
+            skills: cat.skills.map(skill => skill.name === oldName ? { ...skill, name: newName } : skill)
+        } : cat));
+        setEditSkillMode(null);
+        setNewSkillName(null);
+    };
+
+    const handleDragEnd = (result: any) => {
+      if (!result.destination) return;
+
+      const { source, destination } = result;
+      const { droppableId: categoryId, index: srcIndex } = source;
+      const { index: destIndex } = destination;
+
+      const updatedCategories = [...categories];
+      const category = updatedCategories.find(cat => cat.name === categoryId);
+
+      if (category) {
+          const [movedSkill] = category.skills.splice(srcIndex, 1);
+          category.skills.splice(destIndex, 0, movedSkill);
+          setCategories(updatedCategories);
+      }
+  };
 
     return (
-        <Box className="mb-6">
-            <Typography variant="h6" className="mb-2">Skills</Typography>
-            {[0, 1, 2].map((rowIndex) => (
-              <Box key={rowIndex} className="mb-4">
-                <Box className="flex flex-wrap gap-2 mb-2">
-                  {skills[rowIndex].map((skill, skillIndex) => (
-                    <Chip
-                      key={skillIndex}
-                      label={skill}
-                      onDelete={() => handleRemoveSkill(rowIndex, skillIndex)}
-                      deleteIcon={<CloseIcon />}
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Box className="mb-2">
+          <Box display="flex" alignItems="center" mb={2}>
+            <Typography variant="h6" flexGrow={1}>
+              Skills
+            </Typography>
+            <Button
+              variant="contained"
+              size="small"
+              color="primary"
+              onClick={handleAddCategory}
+              startIcon={<Add />}
+            >
+              Add Category
+            </Button>
+          </Box>
+          {categories.map(category => (
+            <Box key={category.name} mb={2}>
+              {editCategoryMode?.categoryId === category.name && (
+                <Box mb={2} p={2} sx={{ border: '1px solid #ccc', borderRadius: '4px' }}>
+                  <Box display="flex" className="gap-2" alignItems="center">
+                    <TextField
+                        variant='standard'
+                        value={newCategoryName ?? category.name}
+                        onChange={(e) => setNewCategoryName(e.target.value)}
+                        fullWidth
+                        multiline
+                        size="small"
+                        sx={{ flexGrow: 1, mr: 2 }}
+
                     />
-                  ))}
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      className="mr-2"
+                      onClick={() => newCategoryName && handleEditCategoryName(category.name, newCategoryName)}
+                    >
+                      Save
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      size="small"
+                      onClick={() => {
+                          setEditCategoryMode(null);
+                          setNewCategoryName(null);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </Box>
                 </Box>
-                <Box className="flex items-center gap-2">
-                  <TextField
-                    label="New Skill"
-                    variant="outlined"
-                    value={newSkill[rowIndex]}
-                    onChange={(e) => {
-                      const updatedNewSkill = [...newSkill];
-                      updatedNewSkill[rowIndex] = e.target.value;
-                      setNewSkill(updatedNewSkill);
-                    }}
-                    fullWidth
-                  />
-                  <Button variant="contained" size="small" color="primary" sx={{ width: '1%' }} onClick={() => handleAddSkill(rowIndex)}>
-                    <AddIcon/>
-                  </Button>
+              )}
+              {editSkillMode?.catName == category.name && (
+                <Box mb={2} p={2} sx={{ border: '1px solid #ccc', borderRadius: '4px' }}>
+                  <Box display="flex" className="gap-2" alignItems="center">
+                    <TextField
+                        variant='standard'
+                        value={newSkillName ?? editSkillMode.skillName}
+                        onChange={(e) => setNewSkillName(e.target.value)}
+                        fullWidth
+                        multiline
+                        size="small"
+                        sx={{ flexGrow: 1, mr: 2 }}
+
+                    />
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      className="mr-2"
+                      onClick={() => newSkillName && handleEditSkillName(category.name, editSkillMode.skillName, newSkillName)}
+                    >
+                      Save
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      size="small"
+                      onClick={() => {
+                          setEditSkillMode(null);
+                          setNewSkillName(null);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </Box>
                 </Box>
-              </Box>
-            ))}
-            <Box className="flex gap-4">
-              <Button variant="contained" color="primary">Assist</Button>
-              <Button variant="contained" color="secondary">Save</Button>
-            </Box>
-        </Box>
-    );
+              )}
+              <Paper elevation={2} sx={{ p: 2 }}>
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                  <Typography variant="subtitle1">{category.name}</Typography>
+                  <Box>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      size="small"
+                      onClick={() => handleAddSkill(category.name, `New Skill ${category.skills.length + 1}`)}
+                      startIcon={<Add />}
+                    >
+                      Add Skill
+                    </Button>
+                    <IconButton
+                      size="small"
+                      aria-controls="category-menu"
+                      aria-haspopup="true"
+                      onClick={() => setEditCategoryMode({ categoryId: category.name })}
+                    >
+                      <Edit />
+                    </IconButton>
+                    <IconButton size="small" onClick={() => handleDeleteCategory(category.name)}>
+                      <Delete />
+                    </IconButton>
+                  </Box>
+                </Box>
+                  <Droppable droppableId={category.name} direction="horizontal">
+                    {(provided) => (
+                      <Box
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        mt={2}
+                        sx={{ display: 'flex', flexWrap: 'wrap' }}
+                      >
+                      {category.skills.map((skill, index) => (
+                        <Draggable key={skill.catName} draggableId={skill.catName} index={index}>
+                          {(provided) => (
+                            <Paper
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                sx={{
+                                    display: 'flex',
+                                    p: 1,
+                                    m: 1,
+                                    
+                                }}
+                                className="skill-cell"
+                            >
+                              <Typography variant="body2" className="pr-1">
+                                {skill.name}
+                              </Typography>
+                              
+                              <IconButton
+                                sx = {{
+                                  width: "13px",
+                                  height: "18px",
+                                  '& .MuiSvgIcon-root': {
+                                    fontSize: '12px', // Adjust the size of the icon
+                                  },
+                                }}
+                                onClick={() => {
+                                    setEditSkillMode({ catName: category.name, skillName: skill.name });
+                                }}
+                              >
+                                <Edit />
+                              </IconButton>
+                              <IconButton
+                                sx = {{
+                                  width: "13px",
+                                  height: "18px",
+                                  '& .MuiSvgIcon-root': {
+                                    fontSize: '12px', // Adjust the size of the icon
+                                  },
+                                }}
+                                onClick={() => handleDeleteSkill(category.name, skill.name)}
+                              >
+                                <Delete />
+                              </IconButton>
+                            </Paper>
+                          )}
+                        </Draggable>
+                      ))}
+                    {provided.placeholder}
+                  </Box>
+                )}
+              </Droppable>
+            </Paper>
+          </Box>
+        ))}
+      </Box>
+    </DragDropContext>
+  );
 }
