@@ -2,3 +2,4 @@ docker/data/*
 */venv/*
 .env
 resume_assist/notebooks/*
+.flake8

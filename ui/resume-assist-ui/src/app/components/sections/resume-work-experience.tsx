@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
-export default function Experiences() {
+export default function Experiences({ onResumeChange, resume, job }) {
     const [experiences, setExperiences] = useState([{ companyName: '', period: '', role: "", descriptions: [] }]);
     const [newDescription, setNewDescription] = useState(['']);
   

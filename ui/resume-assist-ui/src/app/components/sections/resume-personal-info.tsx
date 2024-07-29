@@ -1,20 +1,28 @@
 'use client';
 import { TextField, Typography, Box } from '@mui/material';
 
-export default function PersonalInfo() {
+export default function PersonalInfo({ onResumeChange, resume }) {
+    const handleChange = (field) => (event) => {
+        const { value } = event.target;
+        onResumeChange({
+            ...resume,
+            [field]: value,
+        });
+    };
+
     return (
         <Box className="mb-6">
             <Typography variant="h6" className="mb-2">Background</Typography>
             <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col space-y-4">
-                <TextField label="Name" variant="outlined" fullWidth />
-                <TextField label="Email" variant="outlined" fullWidth />
-                <TextField label="Telephone" variant="outlined" fullWidth />
+                <TextField label="Name" variant="outlined" fullWidth onChange={handleChange('name')}/>
+                <TextField label="Email" variant="outlined" fullWidth onChange={handleChange('email')}/>
+                <TextField label="Telephone" variant="outlined" fullWidth onChange={handleChange('phone')}/>
             </div>
             <div className="flex flex-col space-y-4">
-                <TextField label="LinkedIn" variant="outlined" fullWidth />
-                <TextField label="GitHub" variant="outlined" fullWidth />
-                <TextField label="Personal Website" variant="outlined" fullWidth />
+                <TextField label="LinkedIn" variant="outlined" fullWidth onChange={handleChange('linkedin')}/>
+                <TextField label="GitHub" variant="outlined" fullWidth onChange={handleChange('github')}/>
+                <TextField label="Personal Website" variant="outlined" fullWidth onChange={handleChange('website')}/>
             </div>
             </Box>
         </Box>

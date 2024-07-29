@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { TextField, Typography, Box, Button, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 
-export default function SelfIntro() {
+export default function SelfIntro({ onResumeChange, resume, job }) {
   const [selfIntro, setSelfIntro] = useState('');
   const [dropdownValue, setDropdownValue] = useState('New');
 
