@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography, IconButton, Menu, MenuItem, Paper } from '@mui/material';
 import { Add, Edit, Delete } from '@mui/icons-material';
+import { green, blue, purple } from "@mui/material/colors"
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 interface Skill {
@@ -15,7 +16,6 @@ interface Category {
 
 export default function Skills({ onResumeChange, resume, job }) {
     const [categories, setCategories] = useState<Category[]>([]);
-    const [currentCategoryId, setCurrentCategoryId] = useState<string | null>(null);
     const [editCategoryMode, setEditCategoryMode] = useState<{ categoryId: string | null } | null>(null);
     const [editSkillMode, setEditSkillMode] = useState<{ catName: string | null, skillName: string | null } | null>(null);
     const [newCategoryName, setNewCategoryName] = useState<string | null>(null);
@@ -55,6 +55,33 @@ export default function Skills({ onResumeChange, resume, job }) {
         setNewSkillName(null);
     };
 
+    const handleAssist = async () => {
+        console.log(resume, job, categories);
+        try {
+            // Send a POST request to your backend
+            const response = await fetch('/skills/assist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ resume: resume }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+        } catch (error) {
+            console.error('Failed to refresh PDF:', error);
+        }
+    };
+
+    const handleSaveAll = () => {
+      onResumeChange({
+          ...resume,
+          skills: categories,
+      });
+    }
+
     const handleDragEnd = (result: any) => {
       if (!result.destination) return;
 
@@ -75,20 +102,72 @@ export default function Skills({ onResumeChange, resume, job }) {
     return (
       <DragDropContext onDragEnd={handleDragEnd}>
         <Box className="mb-2">
-          <Box display="flex" alignItems="center" mb={2}>
+          <Box display="flex" className="gap-2" alignItems="center" mb={2}>
             <Typography variant="h6" flexGrow={1}>
               Skills
             </Typography>
             <Button
               variant="contained"
               size="small"
-              color="primary"
+              sx={{ 
+                backgroundColor: purple[300],
+                '&:hover': {
+                  backgroundColor: purple[500], // Change color on hover
+                },
+              }}
               onClick={handleAddCategory}
               startIcon={<Add />}
             >
               Add Category
             </Button>
+            <Button
+              variant="contained"
+              size="small"
+              sx={{ 
+                backgroundColor: blue[300],
+                '&:hover': {
+                  backgroundColor: blue[500], // Change color on hover
+                },
+              }}
+              onClick={handleAssist}
+            >
+              Assist
+            </Button>
+            <Button
+              variant="contained"
+              size="small"
+              sx={{ 
+                backgroundColor: green[300],
+                '&:hover': {
+                  backgroundColor: green[500], // Change color on hover
+                },
+              }}
+              onClick={handleSaveAll}
+            >
+              Save
+            </Button>
           </Box>
+          {categories.length === 0 && (
+            <Paper
+              elevation={0}
+              sx={{
+                padding: '25px',
+                marginBottom: "20px",
+                border: '1.5px solid',
+                borderColor: 'grey.400',
+                borderRadius: '5px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '50px',  // Adjust height as needed
+                textAlign: 'center'
+              }}
+            >
+              <Typography>
+                Add your first skill category
+              </Typography>
+            </Paper>
+          )}
           {categories.map(category => (
             <Box key={category.name} mb={2}>
               {editCategoryMode?.categoryId === category.name && (
