@@ -97,8 +97,8 @@ export default function Skills({ onResumeChange, resume, job }) {
           category.skills.splice(destIndex, 0, movedSkill);
           setCategories(updatedCategories);
       }
-  };
-
+    };
+    
     return (
       <DragDropContext onDragEnd={handleDragEnd}>
         <Box className="mb-2">

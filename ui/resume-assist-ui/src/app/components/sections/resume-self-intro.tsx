@@ -82,8 +82,8 @@ export default function SelfIntro({ onResumeChange, resume, job }) {
           Save
         </Button>
       </Box>
-      <div className="mb-4">
-        <FormControl className="mb-4 mt-4" fullWidth>
+      <div className="mb-2">
+        <FormControl className="mb-1 mt-2" fullWidth>
           <Select
             labelId="self-intro-label"
             value={dropdownValue}
@@ -109,7 +109,6 @@ export default function SelfIntro({ onResumeChange, resume, job }) {
           value={selfIntro}
           onChange={(e) => setSelfIntro(e.target.value)}
           fullWidth
-          className="mb-4 pt-6 pb-4 mt-4"
         />
       </div>
     </Box>

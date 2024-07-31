@@ -1,39 +1,47 @@
 'use client';
 import { useState } from 'react';
-import { TextField, Typography, Box, Paper, IconButton, Button, Divider } from '@mui/material';
+import { TextField, Typography, Box, Paper, FormGroup,FormControlLabel, IconButton, Button, Divider, Checkbox } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
+import { Add, Edit, Delete } from '@mui/icons-material';
 import { green, blue, purple } from "@mui/material/colors"
 import axios from "axios";
 import RemoveIcon from '@mui/icons-material/Remove';
+import exp from 'constants';
 
 export default function Experiences({ onResumeChange, resume, job }) {
-    const [experiences, setExperiences] = useState([{ id: 1, companyName: '', role: '', startDate: null, endDate: null, location: '', highlights: [] }]);
-    const [highlights, setHighlights] = useState([{id: 1, content: ''}]);
-    const [editExperienceMode, setEditExperienceMode] = useState<{ experienceId: number | null } | null>(null);
+    const [experiences, setExperiences] = useState([{ id: 1, companyName: '', role: '', startDate: null, endDate: null, current: false, location: '', highlights: [] }]);
+    const [editExperienceMode, setEditExperienceMode] = useState<{ experienceId: number | null } | null>({ experienceId: 1});
     const [newExperience, setNewExperience] = useState(null);
+    const [newHighlights, setNewHighlights] = useState("");
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = useState<Date | null>(null);
-    const [isCurrent, setIsCurrent] = useState(false);
   
     const handleAddExperience = () => {
       const newId = experiences.length + 1;
-      setExperiences([...experiences, { id: newId, companyName: '', role: '', startDate: null, endDate: null, location: '', highlights: [] }]);
-      setHighlights([...highlights, {id: 1, content: ''}]);
+      setExperiences([...experiences, { id: newId, companyName: '', role: '', startDate: null, endDate: null, current: false, location: '', highlights: [] }]);
     };
   
     const handleRemoveExperience = (experienceId) => {
       setExperiences(experiences.filter(exp => exp.id !== experienceId));
     };
+
+    const handleExperienceFieldChange = (experienceId, field, value) => {
+      setExperiences(experiences.map(exp => exp.id === experienceId ? {...exp, [field]: value} : exp));
+    }
+
+    const handleExperienceHighlightsChange = (experience, hIdx, value) => {
+      // const currHightlights = experience.highlights;
+      // currHightlights[hIdx] = value;
+      // setExperiences(experiences.map(exp => exp.id === experience.id ? {...exp, highlights: currHightlights} : exp));
+    }
   
-    const handleAddHighlight = (experience, highlightContent) => {
-      const newHighlightId = experience.highlights.length + 1;
-      const newHighlight = { id: newHighlightId, content: highlightContent };
-      setExperiences(experiences.map(exp => exp.id === experience.id ? { ...exp, highlights: [...exp.highlights, newHighlight] } : exp));
+    const handleAddHighlight = (experienceId) => {
+      setExperiences(experiences.map(exp => exp.id === experienceId ? { ...exp, highlights: [...exp.highlights, ""] } : exp));
     };
   
-    const handleRemoveHighlight = (experienceId, highlightId) => {
-      setExperiences(experiences.map(exp => exp.id === experienceId ? { ...exp, highlights: exp.highlights.filter(h => h.id !== highlightId) } : exp));
+    const handleRemoveHighlight = (experienceId, highlight) => {
+      setExperiences(experiences.map(exp => exp.id === experienceId ? { ...exp, highlights: exp.highlights.filter(h => h !== highlight) } : exp));
     };
   
     const handleEditExperience = (experienceId) => {
@@ -50,7 +58,7 @@ export default function Experiences({ onResumeChange, resume, job }) {
       updatedExperiences[experienceId].highlights[highlightId].content = value;
       setExperiences(updatedExperiences);
     };
-
+    console.log(experiences);
     const handleAssist = async () => {
       console.log(resume, job, experiences);
       try {
@@ -77,6 +85,7 @@ export default function Experiences({ onResumeChange, resume, job }) {
           work: experiences,
       });
     }
+    
 
     return (
         <Box className="mb-6">
@@ -96,101 +105,196 @@ export default function Experiences({ onResumeChange, resume, job }) {
             >
               <AddIcon/>
             </Button>
-            <Button
-              variant="contained"
-              size="small"
-              sx={{ 
-                backgroundColor: blue[300],
-                '&:hover': {
-                  backgroundColor: blue[500], // Change color on hover
-                },
-              }}
-              onClick={handleAssist}
-              >
-              Assist
-            </Button>
-            <Button
-              variant="contained"
-              size="small"
-              sx={{ 
-                backgroundColor: green[300],
-                '&:hover': {
-                  backgroundColor: green[500], // Change color on hover
-                },
-              }}
-              onClick={handleSaveAll}
-              >
-              Save
-            </Button>
           </Box>
           {experiences.map(exp => (
-            <Box key={exp.id} mb={2}>
-              {editExperienceMode?.experienceId === exp.id && (
-                <Box mb={2} p={2} sx={{ border: '1px solid #ccc', borderRadius: '4px' }}>
-                <Box display="flex" className="gap-2" alignItems="center">
-                  <TextField
-                      variant='standard'
-                      value={newExperience.companyName ?? exp.companyName}
-                      onChange={(e) => handleEditNewExperienceField("companyName", e.target.value)}
-                      fullWidth
-                      multiline
-                      size="small"
-                      sx={{ flexGrow: 1, mr: 2 }}
-                  />
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="small"
-                    className="mr-2"
-                    onClick={() => newExperience && handleEditExperience(exp.id)}
-                  >
-                    Save
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    size="small"
-                    onClick={() => {
-                        setEditExperienceMode(null);
-                        setNewExperience(null);
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </Box>
-              </Box>
-              )}
-            </Box>
-          ))}
-          {experiences.map(exp => (
             <Paper key={exp.id} elevation={2} className="p-4 mb-4">
-              <Typography variant="subtitle1">{exp.companyName || "Company Name"}</Typography>
+              <Box display="flex" className="gap-2 mb-0" alignItems="center" mb={2}>
+                <Typography variant="h6" flexGrow={1}>#{exp.id}</Typography>
+                <IconButton
+                  size="small"
+                  aria-controls="category-menu"
+                  aria-haspopup="true"
+                  onClick={() => setEditExperienceMode({ experienceId: exp.id })}
+                >
+                  <Edit />
+                </IconButton>
+                <IconButton size="small" onClick={() => handleRemoveExperience(exp.id)}>
+                  <Delete />
+                </IconButton>
+              </Box>
+              <Box className="grid grid-cols-4 gap-4 mb-0">
+                <Typography variant="subtitle1" className='col-span-2'>Company Name</Typography>
+                <Typography variant="subtitle1" className='col-span-2'>Role</Typography>
+              </Box>
               <Box className="grid grid-cols-4 gap-4 mb-4">
                 <TextField
                   variant="outlined"
                   size="small"
                   value={exp.companyName}
-                  disabled
+                  disabled={editExperienceMode === null}
                   fullWidth
+                  sx={{
+                    '& .MuiInputBase-root.Mui-disabled': {
+                      backgroundColor: 'grey.100',
+                    },
+                  }}
                   className='col-span-2'
+                  onChange={(e) => handleExperienceFieldChange(exp.id, "companyName", e.target.value)}
                 />
                 <TextField
                   variant="outlined"
                   size="small"
-                  value={exp.startDate}
-                  disabled
+                  value={exp.role}
+                  disabled={editExperienceMode === null}
                   fullWidth
-                  className='col-span-1'
-                />
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  value={exp.endDate ?? "Present"}
-                  disabled
-                  fullWidth
-                  className='col-span-1'
+                  sx={{
+                    '& .MuiInputBase-root.Mui-disabled': {
+                      backgroundColor: 'grey.100',
+                    },
+                  }}
+                  className='col-span-2'
+                  onChange={(e) => handleExperienceFieldChange(exp.id, "role", e.target.value)}
                 />
               </Box>
+              <Box className="grid grid-cols-10 gap-4 mb-2">
+                <Box className="col-span-9 gap-4 mb-0">
+                  <Box className="grid grid-cols-9 gap-4 mb-0">
+                    <Typography variant="subtitle1" className='col-span-3'>Location</Typography>
+                    <Typography variant="subtitle1" className='col-span-3'>Start Date</Typography>
+                    <Typography variant="subtitle1" className='col-span-3'>End Date</Typography>
+                  </Box>
+                  <Box className="grid grid-cols-9 gap-4 mb-2">
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      value={exp.location}
+                      disabled={editExperienceMode === null}
+                      fullWidth
+                      sx={{
+                        '& .MuiInputBase-root.Mui-disabled': {
+                          backgroundColor: 'grey.100',
+                        },
+                      }}
+                      className='col-span-3'
+                      onChange={(e) => handleExperienceFieldChange(exp.id, "location", e.target.value)}
+                    />
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      value={exp.startDate}
+                      disabled={editExperienceMode === null}
+                      fullWidth
+                      sx={{
+                        '& .MuiInputBase-root.Mui-disabled': {
+                          backgroundColor: 'grey.100',
+                        },
+                      }}
+                      className='col-span-3'
+                      onChange={(e) => handleExperienceFieldChange(exp.id, "startDate", e.target.value)}
+                    />
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      value={exp.current ? "" : exp.endDate}
+                      disabled={editExperienceMode === null || exp.current}
+                      fullWidth
+                      sx={{
+                        '& .MuiInputBase-root.Mui-disabled': {
+                          backgroundColor: 'grey.100',
+                        },
+                      }}
+                      className='col-span-3'
+                      onChange={(e) => handleExperienceFieldChange(exp.id, "endDate", e.target.value)}
+                    />
+                  </Box>
+                </Box>
+                <Box className="col-span-1 mb-0 pl-0 ml-0">
+                  <FormGroup>
+                    <FormControlLabel 
+                      control={<Checkbox 
+                        disabled={editExperienceMode === null}
+                        checked={exp.current}
+                        onChange={(e) => handleExperienceFieldChange(exp.id, "current", e.target.checked)}
+                      />} 
+                      label={<span className="text-black">Current</span>}
+                      labelPlacement="top"
+                      sx={{fontcolor: "black"}}
+                      className='ml-0'
+                    />
+                  </FormGroup>
+                </Box>
+              </Box>
+              <Typography variant="subtitle1" className='mb-2'>Highlights</Typography>
+              {exp.highlights.map((h, idx) => (
+                <Box key={idx} className="flex items-center gap-2 mb-2">
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    value={h || newHighlights}
+                    disabled={editExperienceMode === null}
+                    fullWidth
+                    sx={{
+                      '& .MuiInputBase-root.Mui-disabled': {
+                        backgroundColor: 'grey.100',
+                      },
+                    }}
+                    multiline
+                    // onChange={(e) => handleExperienceHighlightsChange(exp, idx, e.target.value)}
+                    onChange={(e) => setNewHighlights(e.target.value)}
+                    />
+                  {editExperienceMode?.experienceId && (
+                    <IconButton onClick={() => handleRemoveHighlight(exp.id, h)}>
+                      <CloseIcon />
+                    </IconButton>
+                  )}
+                </Box>
+              ))}
+              {editExperienceMode?.experienceId && (
+                <Box mt={2} display="flex" justifyContent="space-between">
+                  <Box flexGrow={1}>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      size="small"
+                      onClick={() => handleAddHighlight(exp.id)}
+                      startIcon={<Add />}
+                    >
+                      Add Highlight
+                    </Button>
+                  </Box>
+                  <Box display="flex" justifyContent="flex-end" flexGrow={1}>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      sx={{
+                        backgroundColor: blue[300],
+                        '&:hover': {
+                          backgroundColor: blue[500], // Change color on hover
+                        },
+                        ml: 2, // Add margin-left to create space between buttons
+                      }}
+                      onClick={handleAssist}
+                    >
+                      Assist
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      sx={{ 
+                        ml: 1,
+                        backgroundColor: green[300],
+                        '&:hover': {
+                          backgroundColor: green[500], // Change color on hover
+                        },
+                      }}
+                      onClick={() => newExperience && handleSaveAll()}
+                    >
+                      Save
+                    </Button>
+                  </Box>
+                </Box>
+              )}
             </Paper>
           ))}
             {/* {experiences.map((experience, experienceIndex) => (
