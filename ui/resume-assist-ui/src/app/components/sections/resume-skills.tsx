@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, TextField, Typography, IconButton, Menu, MenuItem, Paper } from '@mui/material';
+import { Box, Button, TextField, Typography, IconButton, Divider, Paper } from '@mui/material';
 import { Add, Edit, Delete } from '@mui/icons-material';
 import { green, blue, purple } from "@mui/material/colors"
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
@@ -100,8 +100,10 @@ export default function Skills({ onResumeChange, resume, job }) {
     };
     
     return (
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <Box className="mb-2">
+      <>
+      <Divider sx={{ borderBottomWidth: '2px'}}/>
+      <DragDropContext onDragEnd={handleDragEnd} >
+        <Box className="mb-2 mt-4">
           <Box display="flex" className="gap-2" alignItems="center" mb={2}>
             <Typography variant="h6" flexGrow={1}>
               Skills
@@ -117,9 +119,10 @@ export default function Skills({ onResumeChange, resume, job }) {
               }}
               onClick={handleAddCategory}
               startIcon={<Add />}
-            >
+              >
               Add Category
             </Button>
+            
             <Button
               variant="contained"
               size="small"
@@ -130,7 +133,7 @@ export default function Skills({ onResumeChange, resume, job }) {
                 },
               }}
               onClick={handleAssist}
-            >
+              >
               Assist
             </Button>
             <Button
@@ -143,25 +146,25 @@ export default function Skills({ onResumeChange, resume, job }) {
                 },
               }}
               onClick={handleSaveAll}
-            >
+              >
               Save
             </Button>
           </Box>
           {categories.length === 0 && (
             <Paper
-              elevation={0}
-              sx={{
-                padding: '25px',
-                marginBottom: "20px",
-                border: '1.5px solid',
-                borderColor: 'grey.400',
-                borderRadius: '5px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '50px',  // Adjust height as needed
-                textAlign: 'center'
-              }}
+            elevation={0}
+            sx={{
+              padding: '25px',
+              marginBottom: "20px",
+              border: '1.5px solid',
+              borderColor: 'grey.400',
+              borderRadius: '5px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '50px',  // Adjust height as needed
+              textAlign: 'center'
+            }}
             >
               <Typography>
                 Add your first skill category
@@ -181,15 +184,15 @@ export default function Skills({ onResumeChange, resume, job }) {
                         multiline
                         size="small"
                         sx={{ flexGrow: 1, mr: 2 }}
-
-                    />
+                        
+                        />
                     <Button
                       variant="contained"
                       color="primary"
                       size="small"
                       className="mr-2"
                       onClick={() => newCategoryName && handleEditCategoryName(category.name, newCategoryName)}
-                    >
+                      >
                       Save
                     </Button>
                     <Button
@@ -197,10 +200,10 @@ export default function Skills({ onResumeChange, resume, job }) {
                       color="secondary"
                       size="small"
                       onClick={() => {
-                          setEditCategoryMode(null);
-                          setNewCategoryName(null);
+                        setEditCategoryMode(null);
+                        setNewCategoryName(null);
                       }}
-                    >
+                      >
                       Cancel
                     </Button>
                   </Box>
@@ -217,15 +220,15 @@ export default function Skills({ onResumeChange, resume, job }) {
                         multiline
                         size="small"
                         sx={{ flexGrow: 1, mr: 2 }}
-
-                    />
+                        
+                        />
                     <Button
                       variant="contained"
                       color="primary"
                       size="small"
                       className="mr-2"
                       onClick={() => newSkillName && handleEditSkillName(category.name, editSkillMode.skillName, newSkillName)}
-                    >
+                      >
                       Save
                     </Button>
                     <Button
@@ -233,10 +236,10 @@ export default function Skills({ onResumeChange, resume, job }) {
                       color="secondary"
                       size="small"
                       onClick={() => {
-                          setEditSkillMode(null);
-                          setNewSkillName(null);
+                        setEditSkillMode(null);
+                        setNewSkillName(null);
                       }}
-                    >
+                      >
                       Cancel
                     </Button>
                   </Box>
@@ -252,7 +255,7 @@ export default function Skills({ onResumeChange, resume, job }) {
                       size="small"
                       onClick={() => handleAddSkill(category.name, `New Skill ${category.skills.length + 1}`)}
                       startIcon={<Add />}
-                    >
+                      >
                       Add Skill
                     </Button>
                     <IconButton
@@ -271,10 +274,10 @@ export default function Skills({ onResumeChange, resume, job }) {
                   <Droppable droppableId={category.name} direction="horizontal">
                     {(provided) => (
                       <Box
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                        mt={2}
-                        sx={{ display: 'flex', flexWrap: 'wrap' }}
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                      mt={2}
+                      sx={{ display: 'flex', flexWrap: 'wrap' }}
                       >
                       {category.skills.map((skill, index) => (
                         <Draggable key={skill.catName} draggableId={skill.catName} index={index}>
@@ -284,13 +287,13 @@ export default function Skills({ onResumeChange, resume, job }) {
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 sx={{
-                                    display: 'flex',
-                                    p: 1,
-                                    m: 1,
-                                    
+                                  display: 'flex',
+                                  p: 1,
+                                  m: 1,
+                                  
                                 }}
                                 className="skill-cell"
-                            >
+                                >
                               <Typography variant="body2" className="pr-1">
                                 {skill.name}
                               </Typography>
@@ -304,9 +307,9 @@ export default function Skills({ onResumeChange, resume, job }) {
                                   },
                                 }}
                                 onClick={() => {
-                                    setEditSkillMode({ catName: category.name, skillName: skill.name });
+                                  setEditSkillMode({ catName: category.name, skillName: skill.name });
                                 }}
-                              >
+                                >
                                 <Edit />
                               </IconButton>
                               <IconButton
@@ -318,7 +321,7 @@ export default function Skills({ onResumeChange, resume, job }) {
                                   },
                                 }}
                                 onClick={() => handleDeleteSkill(category.name, skill.name)}
-                              >
+                                >
                                 <Delete />
                               </IconButton>
                             </Paper>
@@ -334,5 +337,6 @@ export default function Skills({ onResumeChange, resume, job }) {
         ))}
       </Box>
     </DragDropContext>
+    </>
   );
 }
