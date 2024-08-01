@@ -13,17 +13,17 @@ export default function PersonalInfo({ onResumeChange, resume }) {
     return (
         <Box className="mb-6">
             <Typography variant="h6" className="mb-2">Background</Typography>
-            <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-4">
-                <TextField label="Name" variant="outlined" fullWidth onChange={handleChange('name')}/>
-                <TextField label="Email" variant="outlined" fullWidth onChange={handleChange('email')}/>
-                <TextField label="Telephone" variant="outlined" fullWidth onChange={handleChange('phone')}/>
-            </div>
-            <div className="flex flex-col space-y-4">
-                <TextField label="LinkedIn" variant="outlined" fullWidth onChange={handleChange('linkedin')}/>
-                <TextField label="GitHub" variant="outlined" fullWidth onChange={handleChange('github')}/>
-                <TextField label="Personal Website" variant="outlined" fullWidth onChange={handleChange('website')}/>
-            </div>
+            <Box className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                <div className="flex flex-col space-y-4">
+                    <TextField label="Name" variant="outlined" size="small" fullWidth onChange={handleChange('name')}/>
+                    <TextField label="Email" variant="outlined" size="small" fullWidth onChange={handleChange('email')}/>
+                    <TextField label="Telephone" variant="outlined" size="small" fullWidth onChange={handleChange('phone')}/>
+                </div>
+                <div className="flex flex-col space-y-4">
+                    <TextField label="LinkedIn" variant="outlined" size="small" fullWidth onChange={handleChange('linkedin')}/>
+                    <TextField label="GitHub" variant="outlined" size="small" fullWidth onChange={handleChange('github')}/>
+                    <TextField label="Personal Website" variant="outlined" size="small" fullWidth onChange={handleChange('website')}/>
+                </div>
             </Box>
         </Box>
     )

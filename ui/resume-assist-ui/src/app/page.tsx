@@ -9,6 +9,7 @@ import Projects from './components/sections/resume-projects';
 import Experiences from './components/sections/resume-work-experience';
 import PDFSection from './components/sections/pdf';
 import Researches from './components/sections/resume-research';
+import Education from './components/sections/resume-education';
 
 export default function Home() {
   const [resume, setResume] = useState({});
@@ -44,6 +45,7 @@ export default function Home() {
                   <Experiences onResumeChange={handleResumeChange} resume={resume} job={job}/>
                   <Projects onResumeChange={handleResumeChange} resume={resume} job={job}/>
                   <Researches onResumeChange={handleResumeChange} resume={resume}/>
+                  <Education onResumeChange={handleResumeChange} resume={resume}/>
                 </Paper>
               </Box>
               <Box p={1} flex="1" ml={1} bgcolor="transparent" className="mx-2">

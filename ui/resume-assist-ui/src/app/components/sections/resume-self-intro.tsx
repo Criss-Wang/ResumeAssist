@@ -53,7 +53,7 @@ export default function SelfIntro({ onResumeChange, resume, job }) {
   return (
     <Box className="mb-6">
       <Divider sx={{ borderBottomWidth: '2px'}}/>
-      <Box display="flex" className="gap-2" alignItems="center" mb={1}>
+      <Box display="flex" className="gap-2 mt-1" alignItems="center" mb={1}>
         <Typography variant="h6" className="pb-2 pt-4" flexGrow={1}>Self-Introduction</Typography>
         <Button
           variant="contained"
@@ -82,11 +82,12 @@ export default function SelfIntro({ onResumeChange, resume, job }) {
           Save
         </Button>
       </Box>
-      <div className="mb-2">
+      <div className="mb-3">
         <FormControl className="mb-1 mt-2" fullWidth>
           <Select
             labelId="self-intro-label"
             value={dropdownValue}
+            size="small"
             onChange={(e) => setDropdownValue(e.target.value)}
             fullWidth
             >
@@ -99,7 +100,6 @@ export default function SelfIntro({ onResumeChange, resume, job }) {
           </Select>
         </FormControl>
       </div>
-      
       <div className="mb-4">
         <TextField
           label="Self-Introduction"
