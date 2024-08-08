@@ -20,6 +20,7 @@ export default function JobInfo({ onJobChange, job }) {
                     <TextField
                         label="Job Title"
                         variant="outlined"
+                        size="small"
                         fullWidth
                         value={job.title}
                         onChange={handleChange('title')}
@@ -27,6 +28,7 @@ export default function JobInfo({ onJobChange, job }) {
                     <TextField
                         label="Company Name"
                         variant="outlined"
+                        size="small"
                         fullWidth
                         value={job.company}
                         onChange={handleChange('company')}
@@ -35,6 +37,7 @@ export default function JobInfo({ onJobChange, job }) {
                 <TextField
                     label="Job Description"
                     variant="outlined"
+                    size="small"
                     multiline
                     rows={4}
                     fullWidth
