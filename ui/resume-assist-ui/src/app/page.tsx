@@ -27,7 +27,7 @@ export default function Home() {
    // pages/index.js
       <>
         <div>
-          <Typography variant="h2" className="mb-0 pb-0 mt-10 text-center">
+          <Typography variant="h2" className="mb-0 pb-0 mt-10 pt-5 text-center">
             Resume Assistant
           </Typography>
           <Container maxWidth={false}  className="items-center justify-center py-2">
@@ -40,12 +40,12 @@ export default function Home() {
                     Resume Details
                   </Typography>
                   <PersonalInfo onResumeChange={handleResumeChange} resume={resume}/>
-                  <Skills onResumeChange={handleResumeChange} resume={resume} job={job}/>
-                  <SelfIntro onResumeChange={handleResumeChange} resume={resume} job={job}/>
+                  <Education onResumeChange={handleResumeChange} resume={resume}/>
                   <Experiences onResumeChange={handleResumeChange} resume={resume} job={job}/>
                   <Projects onResumeChange={handleResumeChange} resume={resume} job={job}/>
+                  <Skills onResumeChange={handleResumeChange} resume={resume} job={job}/>
                   <Researches onResumeChange={handleResumeChange} resume={resume}/>
-                  <Education onResumeChange={handleResumeChange} resume={resume}/>
+                  <SelfIntro onResumeChange={handleResumeChange} resume={resume} job={job}/>
                 </Paper>
               </Box>
               <Box p={1} flex="1" ml={1} bgcolor="transparent" className="mx-2">
