@@ -10,8 +10,6 @@ export default function Experiences({ onResumeChange, resume, job }) {
     const [experiences, setExperiences] = useState([]);
     const [editExperienceMode, setEditExperienceMode] = useState<{ experienceId: number | null } | null>(null);
     const [newHighlight, setNewHighlight] = useState<{ id: number, hid: number, value: string } | null>(null);
-    const [startDate, setStartDate] = useState<Date | null>(null);
-    const [endDate, setEndDate] = useState<Date | null>(null);
   
     const handleAddExperience = () => {
       const newId = experiences.length + 1;

@@ -14,12 +14,11 @@ class JobDetails(BaseModel):
 
 
 class PersonalInfo(BaseModel):
-    first_name: str
-    last_name: str
-    email: str
-    phone: str
-    github: str
-    linkedin: str
+    name: str = Field(default="")
+    email: str = Field(default="")
+    phone: str = Field(default="")
+    github: str = Field(default="")
+    linkedin: str = Field(default="")
     website: str = Field(default="")
 
 

@@ -27,14 +27,24 @@ export default function PDFSection({ resume }) {
         <Box className="mb-6">
             <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Typography variant="h5">Resume/CV Viewer</Typography>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={refreshPDF}
-                    sx={{ ml: 1 }}
-                >
-                <RefreshIcon />
-                </Button>
+                <Box>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={refreshPDF}
+                        sx={{ ml: 1 }}
+                    >
+                        Save Resume
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={refreshPDF}
+                        sx={{ ml: 1 }}
+                    >
+                        <RefreshIcon />
+                    </Button>
+                </Box>
             </Box>
             <Box mt={4}>
                 <object className="min-w-full" height="1200" data={pdfPath} type="application/pdf">

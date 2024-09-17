@@ -1,6 +1,8 @@
 'use client';
 import React, { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { Container, Typography, Paper, Box } from '@mui/material';
+
 import Skills from './components/sections/resume-skills'
 import SelfIntro from './components/sections/resume-self-intro'
 import PersonalInfo from './components/sections/resume-personal-info';
@@ -12,7 +14,7 @@ import Researches from './components/sections/resume-research';
 import Education from './components/sections/resume-education';
 
 export default function Home() {
-  const [resume, setResume] = useState({});
+  const [resume, setResume] = useState({id: uuidv4()});
   const [job, setJob] = useState({});
 
   const handleResumeChange = (newResume) => {
@@ -22,6 +24,7 @@ export default function Home() {
   const handleJobChange = (newJobInfo) => {
     setJob(newJobInfo);
   };
+
 
   return (
    // pages/index.js
@@ -37,7 +40,7 @@ export default function Home() {
                 <JobInfo onJobChange={handleJobChange} job={job}/>
                 <Paper elevation={3} className="w-full p-10 m-0" >
                   <Typography variant="h5" className="mb-12 pb-4">
-                    Resume Details
+                    <b>Resume Details</b>
                   </Typography>
                   <PersonalInfo onResumeChange={handleResumeChange} resume={resume}/>
                   <Education onResumeChange={handleResumeChange} resume={resume}/>
