@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { TextField, Typography, Box, Paper, FormGroup,FormControlLabel, IconButton, Button, Divider, Checkbox } from '@mui/material';
+import { TextField, Typography, Box, Paper, IconButton, Button, Divider } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import { Add, Edit, Delete } from '@mui/icons-material';
@@ -10,8 +10,6 @@ export default function Projects({ onResumeChange, resume, job }) {
     const [experiences, setExperiences] = useState([]);
     const [editExperienceMode, setEditExperienceMode] = useState<{ experienceId: number | null } | null>(null);
     const [newHighlight, setNewHighlight] = useState<{ id: number, hid: number, value: string } | null>(null);
-    const [startDate, setStartDate] = useState<Date | null>(null);
-    const [endDate, setEndDate] = useState<Date | null>(null);
   
     const handleAddExperience = () => {
       const newId = experiences.length + 1;
