@@ -1,38 +1,69 @@
 'use client';
 import { useState } from 'react';
-import { TextField, Typography, Box, Paper, FormGroup,FormControlLabel, IconButton, Button, Divider, Checkbox } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { TextField, Typography, Box, Paper, IconButton, Button, Divider } from '@mui/material';
+import dayjs from 'dayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import AddIcon from '@mui/icons-material/Add';
-import { Add, Edit, Delete } from '@mui/icons-material';
-import { green, blue, purple } from "@mui/material/colors"
+import { Edit, Delete } from '@mui/icons-material';
+import { green, purple } from "@mui/material/colors"
 
 export default function Researches({ onResumeChange, resume }) {
-    const [experiences, setExperiences] = useState([]);
-    const [editExperienceMode, setEditExperienceMode] = useState<{ experienceId: number | null } | null>(null);
+    const [researches, setResearchs] = useState([]);
+    const [editResearchMode, setEditResearchMode] = useState<{ researchId: number | null } | null>(null);
   
-    const handleAddExperience = () => {
-      const newId = experiences.length + 1;
-      setExperiences([...experiences, { id: newId, title: '', authors: '', conference: '' }]);
+    const handleAddResearch = () => {
+      const newId = researches.length + 1;
+      setResearchs([...researches, { id: newId, title: '', authors: '', conference: '', date: null }]);
     };
   
-    const handleRemoveExperience = (experienceId) => {
-      setExperiences(prevExperiences => {
-        const filteredExperiences = prevExperiences.filter(exp => exp.id !== experienceId);
-        return filteredExperiences.map((exp, index) => ({
+    const handleRemoveResearch = (researchId) => {
+      setResearchs(prevResearchs => {
+        const filteredResearchs = prevResearchs.filter(exp => exp.id !== researchId);
+        return filteredResearchs.map((exp, index) => ({
           ...exp,
           id: index + 1 // Numbering IDs based on their order in the list
         }));
       });
     };
 
-    const handleExperienceFieldChange = (experienceId, field, value) => {
-      setExperiences(experiences.map(exp => exp.id === experienceId ? {...exp, [field]: value} : exp));
+    const handleResearchFieldChange = (researchId, field, value) => {
+      setResearchs(researches.map(exp => exp.id === researchId ? {...exp, [field]: value} : exp));
     }
   
-    const handleSaveAll = () => {
+    const handleSaveAll = async () => {
+      const requestContent = researches.map(exp => {
+        const map = {
+          title: exp.title,
+          authors: exp.authors,
+          conference: exp.conference,
+          date: exp.date? dayjs(exp.date).format("MM/YYYY") : "",
+        };
+        return map;
+      });
+      console.log(requestContent);
+      // Call the API to save the education data
+      try {
+        // Send a POST request to your backend
+        const response = await fetch(`/api/research/save/${resume.id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestContent),
+        });
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+      } catch (error) {
+          console.error('Failed to refresh PDF:', error);
+      }
+
       onResumeChange({
           ...resume,
-          researches: experiences,
+          researches: researches,
       });
     }
     
@@ -51,7 +82,7 @@ export default function Researches({ onResumeChange, resume }) {
                   backgroundColor: purple[500], // Change color on hover
                 },
               }}
-              onClick={handleAddExperience}
+              onClick={handleAddResearch}
             >
               <AddIcon/>
             </Button>
@@ -69,7 +100,7 @@ export default function Researches({ onResumeChange, resume }) {
               Save All
             </Button>
           </Box>
-          {experiences.length === 0 && (
+          {researches.length === 0 && (
             <Paper
               elevation={0}
               sx={{
@@ -90,36 +121,34 @@ export default function Researches({ onResumeChange, resume }) {
               </Typography>
             </Paper>
           )}
-          {experiences.map(exp => (
+          {researches.map(exp => (
             <Paper key={exp.id} elevation={2} className="p-4 mb-4">
               <Box display="flex" className="gap-2 mb-0" alignItems="center" mb={1}>
                   <Typography variant="h6" flexGrow={1}>#{exp.id}</Typography>
-                  {editExperienceMode?.experienceId !== exp.id && (
+                  {editResearchMode?.researchId !== exp.id && (
                     <>
                       <IconButton
                         size="small"
                         aria-controls="category-menu"
                         aria-haspopup="true"
-                        onClick={() => setEditExperienceMode({ experienceId: exp.id })}
+                        onClick={() => setEditResearchMode({ researchId: exp.id })}
                         >
                         <Edit />
                       </IconButton>
-                      <IconButton size="small" onClick={() => handleRemoveExperience(exp.id)}>
+                      <IconButton size="small" onClick={() => handleRemoveResearch(exp.id)}>
                         <Delete />
                       </IconButton>
                     </>
                   )}
               </Box>
               <Box>
-                <Box className="grid grid-cols-4 gap-4 mb-0">
-                    <Typography variant="subtitle1" className='col-span-2'>Title</Typography>
-                </Box>
                 <Box className="grid grid-cols-4 gap-4 mb-4">
-                    <TextField
+                  <TextField
                     variant="outlined"
                     size="small"
+                    label="Title"
                     value={exp.title}
-                    disabled={editExperienceMode?.experienceId !== exp.id}
+                    disabled={editResearchMode?.researchId !== exp.id}
                     fullWidth
                     multiline
                     sx={{
@@ -127,43 +156,38 @@ export default function Researches({ onResumeChange, resume }) {
                         backgroundColor: 'grey.100',
                         },
                     }}
-                    className='col-span-4'
-                    onChange={(e) => handleExperienceFieldChange(exp.id, "title", e.target.value)}
-                    />
-                </Box>
-              </Box>
-              <Box>
-                <Box className="grid grid-cols-4 gap-4 mb-0">
-                    <Typography variant="subtitle1" className='col-span-2'>Authors</Typography>
-                </Box>
-                <Box className="grid grid-cols-4 gap-4 mb-4">
-                    <TextField
-                    variant="outlined"
-                    size="small"
-                    value={exp.authors}
-                    disabled={editExperienceMode?.experienceId !== exp.id}
-                    fullWidth
-                    multiline
-                    sx={{
+                    className='col-span-3'
+                    onChange={(e) => handleResearchFieldChange(exp.id, "title", e.target.value)}
+                  />
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <MobileDatePicker 
+                      label="Date"
+                      disableFuture={true}
+                      value={exp.date}
+                      disabled={editResearchMode?.researchId !== exp.id}
+                      fullWidth
+                      slotProps={{ textField: { size: 'small' } }}
+                      sx={{
                         '& .MuiInputBase-root.Mui-disabled': {
-                        backgroundColor: 'grey.100',
+                          backgroundColor: 'grey.100',
                         },
-                    }}
-                    className='col-span-4'
-                    onChange={(e) => handleExperienceFieldChange(exp.id, "authors", e.target.value)}
+                      }}
+                      className='col-span-1'
+                      views={['month', 'year']}
+                      onChange={(value) => handleResearchFieldChange(exp.id, "date", value)}
                     />
+                  </LocalizationProvider>
                 </Box>
               </Box>
+              
               <Box>
-                <Box className="grid grid-cols-4 gap-4 mb-0">
-                    <Typography variant="subtitle1" className='col-span-2'>Conference</Typography>
-                </Box>
                 <Box className="grid grid-cols-4 gap-4 mb-4">
                     <TextField
                     variant="outlined"
                     size="small"
+                    label="Conference"
                     value={exp.conference}
-                    disabled={editExperienceMode?.experienceId !== exp.id}
+                    disabled={editResearchMode?.researchId !== exp.id}
                     fullWidth
                     multiline
                     sx={{
@@ -172,11 +196,31 @@ export default function Researches({ onResumeChange, resume }) {
                         },
                     }}
                     className='col-span-4'
-                    onChange={(e) => handleExperienceFieldChange(exp.id, "conference", e.target.value)}
+                    onChange={(e) => handleResearchFieldChange(exp.id, "conference", e.target.value)}
                     />
                 </Box>
               </Box>
-              {editExperienceMode?.experienceId === exp.id && (
+              <Box>
+                <Box className="grid grid-cols-4 gap-4 mb-4">
+                    <TextField
+                    variant="outlined"
+                    size="small"
+                    label="Authors"
+                    value={exp.authors}
+                    disabled={editResearchMode?.researchId !== exp.id}
+                    fullWidth
+                    multiline
+                    sx={{
+                        '& .MuiInputBase-root.Mui-disabled': {
+                        backgroundColor: 'grey.100',
+                        },
+                    }}
+                    className='col-span-4'
+                    onChange={(e) => handleResearchFieldChange(exp.id, "authors", e.target.value)}
+                    />
+                </Box>
+              </Box>
+              {editResearchMode?.researchId === exp.id && (
                 <Box display="flex" justifyContent="flex-end" flexGrow={1} mt={4}>
                     <Button
                         variant="contained"
@@ -189,7 +233,7 @@ export default function Researches({ onResumeChange, resume }) {
                             backgroundColor: green[500], // Change color on hover
                         },
                         }}
-                        onClick={() => setEditExperienceMode(null)}
+                        onClick={() => setEditResearchMode(null)}
                     >
                         Save
                     </Button>

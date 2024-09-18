@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { TextField, Typography, Box, Button, Divider } from '@mui/material';
-import { green, blue, purple } from "@mui/material/colors"
+import { green } from "@mui/material/colors"
 
 export default function PersonalInfo({ onResumeChange, resume }) {
     const [personalInfo, setBasicInfo] = useState({});
@@ -16,7 +16,7 @@ export default function PersonalInfo({ onResumeChange, resume }) {
     const handleSaveAll = async () => {
         onResumeChange({
             ...resume,
-            personalInfo: personalInfo
+            personal_info: personalInfo
         });
         
         console.log("Basic Information: ", JSON.stringify(personalInfo));
