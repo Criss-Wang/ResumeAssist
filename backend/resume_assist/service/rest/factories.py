@@ -11,6 +11,7 @@ from resume_assist.service.rest.routes.self_intro import self_intro_router
 from resume_assist.service.rest.routes.skills import skills_router
 from resume_assist.service.rest.routes.work import work_experience_router
 from resume_assist.service.rest.routes.education import education_router
+from resume_assist.service.rest.routes.research import research_router
 from resume_assist.service.rest.routes.resume import resume_router
 
 
@@ -43,4 +44,5 @@ def register_routers(api: FastAPI):
     api.include_router(skills_router)
     api.include_router(work_experience_router)
     api.include_router(education_router)
+    api.include_router(research_router)
     api.include_router(resume_router)
