@@ -1,43 +1,79 @@
 'use client';
 import { useState } from 'react';
 import { TextField, Typography, Box, Paper, FormGroup,FormControlLabel, IconButton, Button, Divider, Checkbox } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
-import { Add, Edit, Delete } from '@mui/icons-material';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import dayjs, { Dayjs } from 'dayjs';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { Add, Edit, Delete, Height } from '@mui/icons-material';
 import { green, blue, purple } from "@mui/material/colors"
-
-
-{/* setExperiences([...experiences, { id: newId, institution: '', area: '', degree: '', startDate: null, endDate: null, area: '', highlights: '' }]); */}
+import exp from 'constants';
 
 
 export default function Education({ onResumeChange, resume }) {
-    const [experiences, setExperiences] = useState([]);
-    const [editExperienceMode, setEditExperienceMode] = useState<{ experienceId: number | null } | null>(null);
+    const [educations, setEducations] = useState([]);
+    const [editEducationMode, setEditEducationMode] = useState<{ educationId: number | null } | null>(null);
   
-    const handleAddExperience = () => {
-      const newId = experiences.length + 1;
-      setExperiences([...experiences, { id: newId, institution: '', area: '', degree: '', startDate: null, endDate: null, current: false, area: '', courses: '', gpa: '', other: '' }]);
+    const handleAddEducation = () => {
+      const newId = educations.length + 1;
+      setEducations([...educations, { id: newId, institution: '', area: '', degree: '', startDate: null, endDate: null, current: false, courses: '', gpa: '', other: '' }]);
     };
   
-    const handleRemoveExperience = (experienceId) => {
-      setExperiences(prevExperiences => {
-        const filteredExperiences = prevExperiences.filter(exp => exp.id !== experienceId);
-        return filteredExperiences.map((exp, index) => ({
+    const handleRemoveEducation = (educationId) => {
+      setEducations(prevEducations => {
+        const filteredEducations = prevEducations.filter(exp => exp.id !== educationId);
+        return filteredEducations.map((exp, index) => ({
           ...exp,
           id: index + 1 // Numbering IDs based on their order in the list
         }));
       });
     };
 
-    const handleExperienceFieldChange = (experienceId, field, value) => {
-      setExperiences(experiences.map(exp => exp.id === experienceId ? {...exp, [field]: value} : exp));
+    const handleEducationFieldChange = (educationId, field, value) => {
+      setEducations(educations.map(exp => exp.id === educationId ? {...exp, [field]: value} : exp));
     }
   
-    const handleSaveAll = () => {
+    const handleSaveAll = async () => {
+      const requestContent = educations.map(exp => {
+        const map = {
+          institution: exp.institution,
+          area: exp.area,
+          degree: exp.degree,
+          current: exp.current,
+          gpa: exp.gpa,
+          courses: exp.courses,
+          other: exp.other,
+          start_date: dayjs(exp.startDate).format("MM/YYYY"),
+          end_date: exp.endDate? dayjs(exp.endDate).format("MM/YYYY") : "",
+        };
+        return map;
+      });
+      console.log(requestContent);
+      // Call the API to save the education data
+      try {
+        // Send a POST request to your backend
+        const response = await fetch(`/api/education/save/${resume.id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestContent),
+        });
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+      } catch (error) {
+          console.error('Failed to refresh PDF:', error);
+      }
+
       onResumeChange({
           ...resume,
-          education: experiences,
-      });
+          education: educations,
+      })
     }
     
 
@@ -55,7 +91,7 @@ export default function Education({ onResumeChange, resume }) {
                   backgroundColor: purple[500], // Change color on hover
                 },
               }}
-              onClick={handleAddExperience}
+              onClick={handleAddEducation}
             >
               <AddIcon/>
             </Button>
@@ -73,7 +109,7 @@ export default function Education({ onResumeChange, resume }) {
               Save All
             </Button>
           </Box>
-          {experiences.length === 0 && (
+          {educations.length === 0 && (
             <Paper
               elevation={0}
               sx={{
@@ -94,36 +130,33 @@ export default function Education({ onResumeChange, resume }) {
               </Typography>
             </Paper>
           )}
-          {experiences.map(exp => (
+          {educations.map(exp => (
             <Paper key={exp.id} elevation={2} className="p-4 mb-4">
                 <Box display="flex" className="gap-2 mb-0" alignItems="center" mb={1}>
                   <Typography variant="h6" flexGrow={1}>#{exp.id}</Typography>
-                  {editExperienceMode?.experienceId !== exp.id && (
+                  {editEducationMode?.educationId !== exp.id && (
                     <>
                       <IconButton
                         size="small"
                         aria-controls="category-menu"
                         aria-haspopup="true"
-                        onClick={() => setEditExperienceMode({ experienceId: exp.id })}
+                        onClick={() => setEditEducationMode({ educationId: exp.id })}
                         >
                         <Edit />
                       </IconButton>
-                      <IconButton size="small" onClick={() => handleRemoveExperience(exp.id)}>
+                      <IconButton size="small" onClick={() => handleRemoveEducation(exp.id)}>
                         <Delete />
                       </IconButton>
                     </>
                   )}
               </Box>
-              <Box className="grid grid-cols-4 gap-4 mb-0">
-                <Typography variant="subtitle1" className='col-span-3'>Institution</Typography>
-                <Typography variant="subtitle1" className='col-span-1'>Degree</Typography>
-              </Box>
               <Box className="grid grid-cols-4 gap-4 mb-4">
                 <TextField
                   variant="outlined"
                   size="small"
+                  label="Institution"
                   value={exp.institution}
-                  disabled={editExperienceMode?.experienceId !== exp.id}
+                  disabled={editEducationMode?.educationId !== exp.id}
                   fullWidth
                   sx={{
                     '& .MuiInputBase-root.Mui-disabled': {
@@ -131,13 +164,14 @@ export default function Education({ onResumeChange, resume }) {
                     },
                   }}
                   className='col-span-3'
-                  onChange={(e) => handleExperienceFieldChange(exp.id, "institution", e.target.value)}
+                  onChange={(e) => handleEducationFieldChange(exp.id, "institution", e.target.value)}
                 />
                 <TextField
                   variant="outlined"
                   size="small"
+                  label="Degree"
                   value={exp.degree}
-                  disabled={editExperienceMode?.experienceId !== exp.id}
+                  disabled={editEducationMode?.educationId !== exp.id}
                   fullWidth
                   sx={{
                     '& .MuiInputBase-root.Mui-disabled': {
@@ -145,92 +179,91 @@ export default function Education({ onResumeChange, resume }) {
                     },
                   }}
                   className='col-span-1'
-                  onChange={(e) => handleExperienceFieldChange(exp.id, "degree", e.target.value)}
+                  onChange={(e) => handleEducationFieldChange(exp.id, "degree", e.target.value)}
                 />
               </Box>
               <Box className="grid grid-cols-10 gap-4 mb-2">
                 <Box className="col-span-9 gap-4 mb-0">
-                  <Box className="grid grid-cols-9 gap-4 mb-0">
-                    <Typography variant="subtitle1" className='col-span-5'>Major</Typography>
-                    <Typography variant="subtitle1" className='col-span-2'>Start Date</Typography>
-                    <Typography variant="subtitle1" className='col-span-2'>End Date (Expected)</Typography>
-                  </Box>
                   <Box className="grid grid-cols-9 gap-4 mb-2">
                     <TextField
                       variant="outlined"
                       size="small"
+                      label="Major"
                       value={exp.area}
-                      disabled={editExperienceMode?.experienceId !== exp.id}
+                      disabled={editEducationMode?.educationId !== exp.id}
                       fullWidth
                       sx={{
                         '& .MuiInputBase-root.Mui-disabled': {
                           backgroundColor: 'grey.100',
                         },
                       }}
-                      className='col-span-5'
-                      onChange={(e) => handleExperienceFieldChange(exp.id, "area", e.target.value)}
+                      className='col-span-4'
+                      onChange={(e) => handleEducationFieldChange(exp.id, "area", e.target.value)}
                     />
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      value={exp.startDate}
-                      disabled={editExperienceMode?.experienceId !== exp.id}
-                      fullWidth
-                      sx={{
-                        '& .MuiInputBase-root.Mui-disabled': {
-                          backgroundColor: 'grey.100',
-                        },
-                      }}
-                      className='col-span-2'
-                      type="month"
-                      onChange={(e) => handleExperienceFieldChange(exp.id, "startDate", e.target.value)}
-                    />
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      value={exp.current ? "" : exp.endDate}
-                      disabled={editExperienceMode?.experienceId !== exp.id || exp.current}
-                      fullWidth
-                      sx={{
-                        '& .MuiInputBase-root.Mui-disabled': {
-                          backgroundColor: 'grey.100',
-                        },
-                      }}
-                      inputProps={{
-                        min: exp.startDate // Ensure endDate is after startDate
-                      }}
-                      className='col-span-2'
-                      type="month"
-                      onChange={(e) => handleExperienceFieldChange(exp.id, "endDate", e.target.value)}
-                    />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <MobileDatePicker 
+                        label="Start Date"
+                        disableFuture={true}
+                        value={exp.startDate}
+                        disabled={editEducationMode?.educationId !== exp.id}
+                        fullWidth
+                        slotProps={{ textField: { size: 'small' } }}
+                        sx={{
+                          '& .MuiInputBase-root.Mui-disabled': {
+                            backgroundColor: 'grey.100',
+                          },
+                        }}
+                        className='col-span-2'
+                        maxDate={exp.endDate}
+                        views={['month', 'year']}
+                        onChange={(value) => handleEducationFieldChange(exp.id, "startDate", value)}
+                      />
+                    </LocalizationProvider>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <MobileDatePicker 
+                        label="End Date"
+                        disableFuture={true}
+                        value={exp.current ? null : exp.endDate}
+                        disabled={editEducationMode?.educationId !== exp.id || exp.current}
+                        fullWidth
+                        slotProps={{ textField: { size: 'small' } }}
+                        sx={{
+                          '& .MuiInputBase-root.Mui-disabled': {
+                            backgroundColor: 'grey.100',
+                          },
+                        }}
+                        inputProps={{
+                          min: exp.startDate // Ensure endDate is after startDate
+                        }}
+                        minDate={exp.startDate}
+                        className='col-span-2 pb-0'
+                        views={['month', 'year']}
+                        onChange={(value) => handleEducationFieldChange(exp.id, "endDate", value)}
+                      />
+                    </LocalizationProvider>
+                    <FormGroup>
+                      <FormControlLabel 
+                        control={<Checkbox 
+                          disabled={editEducationMode?.educationId !== exp.id}
+                          checked={exp.current}
+                          onChange={(e) => handleEducationFieldChange(exp.id, "current", e.target.checked)}
+                        />} 
+                        label={<span className="text-black">Current</span>}
+                        labelPlacement="end"
+                        sx={{fontcolor: "black"}}
+                        className='pl-6'
+                      />
+                    </FormGroup>
                   </Box>
                 </Box>
-                <Box className="col-span-1 mb-0 pl-0 ml-0">
-                  <FormGroup>
-                    <FormControlLabel 
-                      control={<Checkbox 
-                        disabled={editExperienceMode?.experienceId !== exp.id}
-                        checked={exp.current}
-                        onChange={(e) => handleExperienceFieldChange(exp.id, "current", e.target.checked)}
-                      />} 
-                      label={<span className="text-black">Current</span>}
-                      labelPlacement="top"
-                      sx={{fontcolor: "black"}}
-                      className='ml-0'
-                    />
-                  </FormGroup>
-                </Box>
-              </Box>
-              <Box className="grid grid-cols-8 gap-4 mb-0">
-                <Typography variant="subtitle1" className='col-span-1'>GPA</Typography>
-                <Typography variant="subtitle1" className='col-span-7'>Courseworks</Typography>
               </Box>
               <Box className="grid grid-cols-8 gap-4 mb-4">
                 <TextField
                   variant="outlined"
                   size="small"
+                  label="GPA"
                   value={exp.gpa}
-                  disabled={editExperienceMode?.experienceId !== exp.id}
+                  disabled={editEducationMode?.educationId !== exp.id}
                   fullWidth
                   sx={{
                     '& .MuiInputBase-root.Mui-disabled': {
@@ -238,13 +271,14 @@ export default function Education({ onResumeChange, resume }) {
                     },
                   }}
                   className='col-span-1'
-                  onChange={(e) => handleExperienceFieldChange(exp.id, "gpa", e.target.value)}
+                  onChange={(e) => handleEducationFieldChange(exp.id, "gpa", e.target.value)}
                 />
                 <TextField
                   variant="outlined"
                   size="small"
+                  label="Courseworks"
                   value={exp.courses}
-                  disabled={editExperienceMode?.experienceId !== exp.id}
+                  disabled={editEducationMode?.educationId !== exp.id}
                   fullWidth
                   sx={{
                     '& .MuiInputBase-root.Mui-disabled': {
@@ -252,18 +286,16 @@ export default function Education({ onResumeChange, resume }) {
                     },
                   }}
                   className='col-span-7'
-                  onChange={(e) => handleExperienceFieldChange(exp.id, "courses", e.target.value)}
+                  onChange={(e) => handleEducationFieldChange(exp.id, "courses", e.target.value)}
                 />
-              </Box>
-              <Box className="grid grid-cols-4 gap-4 mb-0">
-                <Typography variant="subtitle1" className='col-span-4'>Other Highlights (split by ";" sign)</Typography>
               </Box>
               <Box className="grid grid-cols-4 gap-4 mb-4">
                 <TextField
                   variant="outlined"
                   size="small"
+                  label='Highlights [split by ";" sign]'
                   value={exp.other}
-                  disabled={editExperienceMode?.experienceId !== exp.id}
+                  disabled={editEducationMode?.educationId !== exp.id}
                   fullWidth
                   multiline
                   sx={{
@@ -272,10 +304,10 @@ export default function Education({ onResumeChange, resume }) {
                     },
                   }}
                   className='col-span-4'
-                  onChange={(e) => handleExperienceFieldChange(exp.id, "other", e.target.value)}
+                  onChange={(e) => handleEducationFieldChange(exp.id, "other", e.target.value)}
                 />
               </Box>
-              {editExperienceMode?.experienceId === exp.id && (
+              {editEducationMode?.educationId === exp.id && (
                 <Box display="flex" justifyContent="flex-end" flexGrow={1} mt={4}>
                     <Button
                         variant="contained"
@@ -288,7 +320,7 @@ export default function Education({ onResumeChange, resume }) {
                             backgroundColor: green[500], // Change color on hover
                         },
                         }}
-                        onClick={() => setEditExperienceMode(null)}
+                        onClick={() => setEditEducationMode(null)}
                     >
                         Save
                     </Button>
