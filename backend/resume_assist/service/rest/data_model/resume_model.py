@@ -13,6 +13,18 @@ class JobDetails(BaseModel):
     url: str
 
 
+class Education(BaseModel):
+    institution: str = Field(default="")
+    area: str = Field(default="")
+    degree: str = Field(default="")
+    current: bool = Field(default=False)
+    gpa: str = Field(default="")
+    courses: str = Field(default="")
+    other: str = Field(default="")
+    start_date: str = Field(default="")
+    end_date: str = Field(default="")
+
+
 class PersonalInfo(BaseModel):
     name: str = Field(default="")
     email: str = Field(default="")
