@@ -25,6 +25,13 @@ class Education(BaseModel):
     end_date: str = Field(default="")
 
 
+class Research(BaseModel):
+    title: str = Field(default="")
+    authors: str = Field(default="")
+    conference: str = Field(default="")
+    date: str = Field(default="")
+
+
 class PersonalInfo(BaseModel):
     name: str = Field(default="")
     email: str = Field(default="")
@@ -43,6 +50,7 @@ class Project(BaseModel):
 
 class Intro(BaseModel):
     content: str
+    title: str
 
 
 class Skills(BaseModel):
@@ -62,9 +70,11 @@ class Work(BaseModel):
 class Resume(BaseModel):
     job_details: JobDetails
     personal_info: PersonalInfo
-    intro: Intro
+    researches: List[Research]
+    educations: List[Education]
+    self_intro: Intro
     skills: Skills
-    works: List[Work]
+    work: List[Work]
     projects: List[Project]
     addon_info: Optional[AddonInfo] = Field(default=None)
 

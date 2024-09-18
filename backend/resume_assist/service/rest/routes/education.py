@@ -11,7 +11,7 @@ education_router = APIRouter(prefix="/api/education", tags=["Resume: Education"]
 
 
 @education_router.post("/save/{id}")
-def save_project(id: UUID, request: List[Education]):
+def save_education(id: UUID, request: List[Education]):
     try:
         for education in request:
             query = """
@@ -41,7 +41,7 @@ def save_project(id: UUID, request: List[Education]):
 
 
 @education_router.get("/{id}", response_model=List[Education])
-def get_project(id: UUID):
+def get_education(id: UUID):
     try:
         query = """
         MATCH (edu:Education {id: $id})
