@@ -1,16 +1,13 @@
 'use client';
 import { useState } from 'react';
-import { TextField, Typography, Box, Paper, FormGroup,FormControlLabel, IconButton, Button, Divider, Checkbox } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import { TextField, Typography, Box, Paper, FormGroup,FormControlLabel, IconButton, Button, Divider, Checkbox } from '@mui/material';
+import dayjs from 'dayjs';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
-import dayjs, { Dayjs } from 'dayjs';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { Add, Edit, Delete, Height } from '@mui/icons-material';
-import { green, blue, purple } from "@mui/material/colors"
-import exp from 'constants';
+import { Edit, Delete } from '@mui/icons-material';
+import { green, purple } from "@mui/material/colors"
 
 
 export default function Education({ onResumeChange, resume }) {
@@ -72,7 +69,7 @@ export default function Education({ onResumeChange, resume }) {
 
       onResumeChange({
           ...resume,
-          education: educations,
+          educations: educations,
       })
     }
     

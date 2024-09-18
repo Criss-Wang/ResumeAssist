@@ -14,8 +14,19 @@ import Researches from './components/sections/resume-research';
 import Education from './components/sections/resume-education';
 
 export default function Home() {
-  const [resume, setResume] = useState({id: uuidv4()});
-  const [job, setJob] = useState({});
+  const [resume, setResume] = useState({ 
+    id: uuidv4(), 
+    job_details: {}, 
+    personal_info: {}, 
+    researches: [], 
+    educations: [],
+    self_intro: {},
+    skills: [],
+    work: [],
+    projects: [],
+    additional_info: {}
+  });
+  const [job, setJob] = useState({ position: '', company: '', url: '', description: '' });
 
   const handleResumeChange = (newResume) => {
     console.log(newResume);
