@@ -6,18 +6,17 @@ from resume_assist.io.db.engine import neo4j_client
 
 
 personal_info_router = APIRouter(
-    prefix="/personal-info", tags=["Resume: Personal Information"]
+    prefix="/api/personal-info", tags=["Resume: Personal Information"]
 )
 
 
-@personal_info_router.post("/{id}")
+@personal_info_router.post("/save/{id}")
 def save_personal_info(id: UUID, request: PersonalInfo):
     try:
         query = """
         MERGE (pi:PersonalInfo {id: $id})
         SET
-            pi.first_name = $first_name,
-            pi.last_name = $last_name,
+            pi.name = $name,
             pi.email = $email,
             pi.phone = $phone,
             pi.github = $github,
