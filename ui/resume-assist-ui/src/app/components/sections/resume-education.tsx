@@ -212,6 +212,7 @@ export default function Education({ onResumeChange, resume }) {
                         }}
                         className='col-span-2'
                         maxDate={exp.endDate}
+                        format="YYYY/MM"
                         views={['month', 'year']}
                         onChange={(value) => handleEducationFieldChange(exp.id, "startDate", value)}
                       />
@@ -234,6 +235,7 @@ export default function Education({ onResumeChange, resume }) {
                         }}
                         minDate={exp.startDate}
                         className='col-span-2 pb-0'
+                        format="YYYY/MM"
                         views={['month', 'year']}
                         onChange={(value) => handleEducationFieldChange(exp.id, "endDate", value)}
                       />
