@@ -45,28 +45,38 @@ export default function Skills({ onResumeChange, resume, job }) {
         setCategories(categories.map(cat => cat.name === catName ? { ...cat, skills: cat.skills.filter(skill => skill.name !== skillName) } : cat));
     };
 
-    const handleEditSkillName = (catName: string, oldName: string, newName: string) => {
-        console.log(catName, oldName, newName)
+    const handleEditSkillName = (catName: string, oldName: string, newName: string | null) => {
+        setEditSkillMode(null);
+        setNewSkillName(null);
+        console.log(catName, oldName, newName);
+        if (newName === null) {
+          newName = oldName;
+        }
         setCategories(categories.map(cat => cat.name === catName ? {
             ...cat,
             skills: cat.skills.map(skill => skill.name === oldName ? { ...skill, name: newName } : skill)
         } : cat));
-        setEditSkillMode(null);
-        setNewSkillName(null);
     };
 
     const handleAssist = async () => {
-        console.log(resume, job, categories);
         try {
             // Send a POST request to your backend
-            const response = await fetch('/skills/assist', {
+            const response = await fetch('/api/skills/assist', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ resume: resume }),
+                body: JSON.stringify({ resume: resume, job: job, categories: categories }),
             });
-
+            const data = await response.json();
+            const newCategories = data.map(d => {
+              return {
+                name: d.category, 
+                skills: d.skills.map(skill => ({ name: skill, catName: d.category }))
+              }
+            });
+            console.log(newCategories);
+            setCategories(newCategories);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -75,7 +85,32 @@ export default function Skills({ onResumeChange, resume, job }) {
         }
     };
 
-    const handleSaveAll = () => {
+    const handleSaveAll = async () => {
+      const skills = {
+        categories: categories.map(cat => cat.name),
+        skill_mapping: categories.reduce((acc, cat) => {
+          return {
+            ...acc,
+            [cat.name]: cat.skills.map(skill => skill.name),
+          };
+        }, {})
+      };
+      console.log(skills);
+      try {
+        // Send a POST request to your backend
+        const response = await fetch(`/api/skills/save/${resume.id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ...skills }),
+        });
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+      } catch (error) {
+          console.error('Failed to refresh PDF:', error);
+      }
       onResumeChange({
           ...resume,
           skills: categories,
@@ -227,7 +262,7 @@ export default function Skills({ onResumeChange, resume, job }) {
                       color="primary"
                       size="small"
                       className="mr-2"
-                      onClick={() => newSkillName && handleEditSkillName(category.name, editSkillMode.skillName, newSkillName)}
+                      onClick={() => handleEditSkillName(category.name, editSkillMode.skillName, newSkillName)}
                       >
                       Save
                     </Button>
@@ -274,13 +309,13 @@ export default function Skills({ onResumeChange, resume, job }) {
                   <Droppable droppableId={category.name} direction="horizontal">
                     {(provided) => (
                       <Box
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                      mt={2}
-                      sx={{ display: 'flex', flexWrap: 'wrap' }}
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                          mt={2}
+                          sx={{ display: 'flex', flexWrap: 'wrap' }}
                       >
                       {category.skills.map((skill, index) => (
-                        <Draggable key={skill.catName} draggableId={skill.catName} index={index}>
+                        <Draggable key={index} draggableId={skill.catName} index={index}>
                           {(provided) => (
                             <Paper
                                 ref={provided.innerRef}

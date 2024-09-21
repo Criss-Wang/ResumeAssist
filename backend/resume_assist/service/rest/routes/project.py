@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, HTTPException, Request, Response
 from uuid import UUID
 
@@ -16,25 +18,28 @@ from resume_assist.utilities.formatting_utils import (
 )
 
 
-project_router = APIRouter(prefix="/project", tags=["Resume: Project Experience"])
+project_router = APIRouter(prefix="/api/project", tags=["Resume: Project Experience"])
 
 
-@project_router.post("/{id}/save")
-def save_project(id: UUID, request: Project):
+@project_router.post("/save/{id}")
+def save_project(id: UUID, request: List[Project]):
     try:
-        query = """
-        MERGE (pr:Project {id: $id})
-        SET
-            pr.project_name = $project_name,
-            pr.start_date = $start_date,
-            pr.end_date = $end_date,
-            pr.highlights = $highlights
-        RETURN pr
-        """
-        parameters = {"id": str(id), **request.model_dump()}
-        result = neo4j_client.query(query, parameters)
-        if not result:
-            raise HTTPException(500, "Failed to save personal information")
+        for project in request:
+            query = """
+            MERGE (pr:Project {id: $id})
+            SET
+                pr.project_name = $project_name,
+                pr.start_date = $start_date,
+                pr.end_date = $end_date,
+                pr.url = $url,
+                pr.current = $current,
+                pr.highlights = $highlights
+            RETURN pr
+            """
+            parameters = {"id": str(id), **project.model_dump()}
+            result = neo4j_client.query(query, parameters)
+            if not result:
+                raise HTTPException(500, "Failed to save personal information")
         return Response(status_code=200)
     except Exception as e:
         # logger.exception(e)
@@ -42,7 +47,7 @@ def save_project(id: UUID, request: Project):
         raise HTTPException(500, "Unexpected error")
 
 
-@project_router.get("/{id}", response_model=Project)
+@project_router.get("/{id}", response_model=List[Project])
 def get_project(id: UUID):
     try:
         query = """
@@ -53,15 +58,16 @@ def get_project(id: UUID):
         result = neo4j_client.query(query, parameters)
         if not result:
             raise HTTPException(404, "Personal Information not found")
-        project = result[0]["pr"]
-        return Project(**project)
+
+        projects = [Project(**record["pr"]) for record in result]
+        return projects
     except Exception as e:
         # logger.exception(e)
         print(e)
         raise HTTPException(500, "Unexpected error")
 
 
-@project_router.post("/assist")
+@project_router.post("/assist", response_model=List[str])
 async def assist_project(request: Request):
     try:
         info_vars = await request.json()

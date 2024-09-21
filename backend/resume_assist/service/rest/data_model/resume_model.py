@@ -46,6 +46,8 @@ class Project(BaseModel):
     start_date: str
     end_date: str
     highlights: List[str]
+    current: bool
+    url: str
 
 
 class Intro(BaseModel):
