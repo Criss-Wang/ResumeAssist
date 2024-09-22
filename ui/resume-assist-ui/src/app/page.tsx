@@ -64,7 +64,7 @@ export default function Home() {
               </Box>
               <Box p={1} flex="1" ml={1} bgcolor="transparent" className="mx-2">
                 <Paper elevation={3} className="w-full p-10 m-0 min-h-80" >
-                  <PDFSection resume={resume}/>
+                  <PDFSection resume={resume} job={job}/>
                 </Paper>
               </Box>
             </Box>
