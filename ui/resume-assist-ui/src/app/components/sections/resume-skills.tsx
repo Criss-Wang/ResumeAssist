@@ -95,7 +95,7 @@ export default function Skills({ onResumeChange, resume, job }) {
           };
         }, {})
       };
-      console.log(skills);
+      
       try {
         // Send a POST request to your backend
         const response = await fetch(`/api/skills/save/${resume.id}`, {
@@ -113,7 +113,7 @@ export default function Skills({ onResumeChange, resume, job }) {
       }
       onResumeChange({
           ...resume,
-          skills: categories,
+          skills: skills,
       });
     }
 

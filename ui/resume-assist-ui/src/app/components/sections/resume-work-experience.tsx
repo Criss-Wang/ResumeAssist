@@ -3,6 +3,10 @@ import { useState } from 'react';
 import { TextField, Typography, Box, Paper, FormGroup,FormControlLabel, IconButton, Button, Divider, Checkbox } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
+import dayjs from 'dayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { Add, Edit, Delete } from '@mui/icons-material';
 import { green, blue, purple } from "@mui/material/colors"
 
@@ -68,10 +72,40 @@ export default function Experiences({ onResumeChange, resume, job }) {
       }
     };
   
-    const handleSaveAll = () => {
+    const handleSaveAll = async () => {
+      const work_body = experiences.map(exp => {
+        const map = {
+          id: exp.id,
+          company: exp.companyName,
+          role: exp.role,
+          location: exp.location,
+          start_date: dayjs(exp.startDate).format("MM/YYYY"),
+          end_date: exp.endDate? dayjs(exp.endDate).format("MM/YYYY") : "",
+          current: exp.current,
+          highlights: exp.highlights.map(h => h.value),
+        };
+        return map;
+      });
+      try {
+        // Send a POST request to your backend
+        const response = await fetch(`/api/work/save/${resume.id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(work_body),
+        });
+  
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+      } catch (error) {
+          console.error('Failed to refresh PDF:', error);
+      }
+
       onResumeChange({
           ...resume,
-          work: experiences,
+          work: work_body,
       });
     }
     
@@ -149,14 +183,11 @@ export default function Experiences({ onResumeChange, resume, job }) {
                     </>
                   )}
               </Box>
-              <Box className="grid grid-cols-4 gap-4 mb-0">
-                <Typography variant="subtitle1" className='col-span-2'>Company Name</Typography>
-                <Typography variant="subtitle1" className='col-span-2'>Role</Typography>
-              </Box>
               <Box className="grid grid-cols-4 gap-4 mb-4">
                 <TextField
                   variant="outlined"
                   size="small"
+                  label="Company Name"
                   value={exp.companyName}
                   disabled={editExperienceMode?.experienceId !== exp.id}
                   fullWidth
@@ -171,6 +202,7 @@ export default function Experiences({ onResumeChange, resume, job }) {
                 <TextField
                   variant="outlined"
                   size="small"
+                  label="Role"
                   value={exp.role}
                   disabled={editExperienceMode?.experienceId !== exp.id}
                   fullWidth
@@ -183,87 +215,86 @@ export default function Experiences({ onResumeChange, resume, job }) {
                   onChange={(e) => handleExperienceFieldChange(exp.id, "role", e.target.value)}
                 />
               </Box>
-              <Box className="grid grid-cols-10 gap-4 mb-2">
-                <Box className="col-span-9 gap-4 mb-0">
-                  <Box className="grid grid-cols-9 gap-4 mb-0">
-                    <Typography variant="subtitle1" className='col-span-3'>Location</Typography>
-                    <Typography variant="subtitle1" className='col-span-3'>Start Date</Typography>
-                    <Typography variant="subtitle1" className='col-span-3'>End Date</Typography>
-                  </Box>
-                  <Box className="grid grid-cols-9 gap-4 mb-2">
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      value={exp.location}
+              <Box className="grid grid-cols-12 gap-4 mb-2">
+                <TextField
+                  variant="outlined"
+                  size="small"
+                  label="Location"
+                  value={exp.location}
+                  disabled={editExperienceMode?.experienceId !== exp.id}
+                  fullWidth
+                  sx={{
+                    '& .MuiInputBase-root.Mui-disabled': {
+                      backgroundColor: 'grey.100',
+                    },
+                  }}
+                  className='col-span-6'
+                  onChange={(e) => handleExperienceFieldChange(exp.id, "location", e.target.value)}
+                />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <MobileDatePicker 
+                    label="Start Date"
+                    disableFuture={true}
+                    value={exp.startDate}
+                    disabled={editExperienceMode?.experienceId !== exp.id}
+                    fullWidth
+                    slotProps={{ textField: { size: 'small' } }}
+                    sx={{
+                      '& .MuiInputBase-root.Mui-disabled': {
+                        backgroundColor: 'grey.100',
+                      },
+                    }}
+                    className='col-span-2'
+                    maxDate={exp.endDate}
+                    format="YYYY/MM"
+                    views={['month', 'year']}
+                    onChange={(value) => handleExperienceFieldChange(exp.id, "startDate", value)}
+                  />
+                </LocalizationProvider>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <MobileDatePicker 
+                    label="End Date"
+                    disableFuture={true}
+                    value={exp.current ? null : exp.endDate}
+                    disabled={editExperienceMode?.experienceId !== exp.id || exp.current}
+                    fullWidth
+                    slotProps={{ textField: { size: 'small' } }}
+                    sx={{
+                      '& .MuiInputBase-root.Mui-disabled': {
+                        backgroundColor: 'grey.100',
+                      },
+                    }}
+                    inputProps={{
+                      min: exp.startDate // Ensure endDate is after startDate
+                    }}
+                    minDate={exp.startDate}
+                    className='col-span-2 pb-0'
+                    format="YYYY/MM"
+                    views={['month', 'year']}
+                    onChange={(value) => handleExperienceFieldChange(exp.id, "endDate", value)}
+                  />
+                </LocalizationProvider>
+                <FormGroup>
+                  <FormControlLabel 
+                    control={<Checkbox 
                       disabled={editExperienceMode?.experienceId !== exp.id}
-                      fullWidth
-                      sx={{
-                        '& .MuiInputBase-root.Mui-disabled': {
-                          backgroundColor: 'grey.100',
-                        },
-                      }}
-                      className='col-span-3'
-                      onChange={(e) => handleExperienceFieldChange(exp.id, "location", e.target.value)}
-                    />
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      value={exp.startDate}
-                      disabled={editExperienceMode?.experienceId !== exp.id}
-                      fullWidth
-                      sx={{
-                        '& .MuiInputBase-root.Mui-disabled': {
-                          backgroundColor: 'grey.100',
-                        },
-                      }}
-                      className='col-span-3'
-                      type="month"
-                      onChange={(e) => handleExperienceFieldChange(exp.id, "startDate", e.target.value)}
-                    />
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      value={exp.current ? "" : exp.endDate}
-                      disabled={editExperienceMode?.experienceId !== exp.id || exp.current}
-                      fullWidth
-                      sx={{
-                        '& .MuiInputBase-root.Mui-disabled': {
-                          backgroundColor: 'grey.100',
-                        },
-                      }}
-                      inputProps={{
-                        min: exp.startDate // Ensure endDate is after startDate
-                      }}
-                      className='col-span-3'
-                      type="month"
-                      onChange={(e) => handleExperienceFieldChange(exp.id, "endDate", e.target.value)}
-                    />
-                  </Box>
-                </Box>
-                <Box className="col-span-1 mb-0 pl-0 ml-0">
-                  <FormGroup>
-                    <FormControlLabel 
-                      control={<Checkbox 
-                        disabled={editExperienceMode?.experienceId !== exp.id}
-                        checked={exp.current}
-                        onChange={(e) => handleExperienceFieldChange(exp.id, "current", e.target.checked)}
-                      />} 
-                      label={<span className="text-black">Current</span>}
-                      labelPlacement="top"
-                      sx={{fontcolor: "black"}}
-                      className='ml-0'
-                    />
-                  </FormGroup>
-                </Box>
+                      checked={exp.current}
+                      onChange={(e) => handleExperienceFieldChange(exp.id, "current", e.target.checked)}
+                    />} 
+                    label={<span className="text-black">Current</span>}
+                    labelPlacement="end"
+                    sx={{fontcolor: "black"}}
+                    className='pl-1'
+                  />
+                </FormGroup>
               </Box>
-              <Typography variant="subtitle1" className='mb-2'>Highlights</Typography>
-              {exp.highlights.map((h) => (
+              <Typography variant="subtitle1" className='pl-1 mb-2 pb-2 underline italic'>Highlights</Typography>
+              {exp.highlights.map((h, idx) => (
                 <>
                   {newHighlight?.id === exp.id && newHighlight?.hid === h.id && (
-                    <Box mb={2} p={2} sx={{ border: '1px solid #ccc', borderRadius: '4px' }}>
-                      <Box display="flex" className="gap-2" alignItems="center">
+                    <Box key={idx} mb={2} p={1} sx={{ border: '1px solid #ccc', borderRadius: '4px' }}>
+                      <Box display="flex" className="gap-2 p-0" alignItems="center">
                         <TextField
-                          label="# Edit Highlight"
                           variant='filled'
                           value={newHighlight.value}
                           onChange={(e) => setNewHighlight({ id: newHighlight.id, hid: newHighlight.hid, value: e.target.value })}
@@ -276,8 +307,9 @@ export default function Experiences({ onResumeChange, resume, job }) {
                           }}
                           InputProps={{
                             style: {
+                              paddingTop: '0.3rem',
                               fontSize: '0.9rem',
-                              lineHeight: '1.2rem'
+                              lineHeight: '1rem'
                             },
                           }}
                         />
@@ -303,7 +335,7 @@ export default function Experiences({ onResumeChange, resume, job }) {
                       </Box>
                     </Box>
                   ) }
-                  <Box key={h.id} className="flex items-center gap-2 mb-2">
+                  {(newHighlight?.id !== exp.id || newHighlight?.hid !== h.id) && (<Box key={h.id} className="flex items-center gap-2 mb-2">
                     <Typography 
                       variant="subtitle1" 
                       flexGrow={1} 
@@ -341,7 +373,7 @@ export default function Experiences({ onResumeChange, resume, job }) {
                         <CloseIcon />
                       </IconButton>
                     )}
-                  </Box>
+                  </Box>)}
                 </>
               ))}
               {editExperienceMode?.experienceId === exp.id && (

@@ -9,7 +9,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { Add, Edit, Delete } from '@mui/icons-material';
 import { green, blue, purple } from "@mui/material/colors"
-import { Hind_Guntur } from 'next/font/google';
 
 export default function Projects({ onResumeChange, resume, job }) {
     const [projects, setProjects] = useState([]);
@@ -111,7 +110,7 @@ export default function Projects({ onResumeChange, resume, job }) {
       }
       onResumeChange({
           ...resume,
-          projects: projects,
+          projects: projectPayload,
       });
     }
     
