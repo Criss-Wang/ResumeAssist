@@ -3,7 +3,6 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from resume_assist.service.rest.routes.addon import addon_info_router
 from resume_assist.service.rest.routes.job_details import job_details_router
 from resume_assist.service.rest.routes.personal import personal_info_router
 from resume_assist.service.rest.routes.project import project_router
@@ -36,7 +35,6 @@ def create_fastapi_application() -> FastAPI:
 
 
 def register_routers(api: FastAPI):
-    api.include_router(addon_info_router)
     api.include_router(job_details_router)
     api.include_router(personal_info_router)
     api.include_router(project_router)

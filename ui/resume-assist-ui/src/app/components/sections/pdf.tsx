@@ -2,24 +2,44 @@ import React from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
-export default function PDFSection({ resume }) {
-    const refreshPDF = async () => {
+export default function PDFSection({ resume, job }) {
+    // const refreshPDF = async () => {
+    //     try {
+    //         // Send a POST request to your backend
+    //         const response = await fetch('/api/pdf/render', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({ ...resume }), // Replace with your payload if needed
+    //         });
+
+    //         if (!response.ok) {
+    //             throw new Error('Network response was not ok');
+    //         }
+    //     } catch (error) {
+    //         console.error('Failed to refresh PDF:', error);
+    //     }
+    // };
+
+    const saveResume = async () => {
         try {
-            // Send a POST request to your backend
-            const response = await fetch('/pdf/render', {
+            console.log({ ...resume, job_details: job});
+            
+            const response = await fetch(`/api/resume/save/${resume.id}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ "resume": resume }), // Replace with your payload if needed
+                body: JSON.stringify({ ...resume, job_details: job}),
             });
-
+      
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-        } catch (error) {
-            console.error('Failed to refresh PDF:', error);
-        }
+          } catch (error) {
+              console.error('Failed to refresh PDF:', error);
+          }
     };
 
     const pdfPath = '/pdf/cv.pdf';
@@ -31,19 +51,19 @@ export default function PDFSection({ resume }) {
                     <Button
                         variant="contained"
                         color="secondary"
-                        onClick={refreshPDF}
+                        onClick={saveResume}
                         sx={{ ml: 1 }}
                     >
-                        Save Resume
+                        Save Resume & Refresh <RefreshIcon />
                     </Button>
-                    <Button
+                    {/* <Button
                         variant="contained"
                         color="primary"
                         onClick={refreshPDF}
                         sx={{ ml: 1 }}
                     >
-                        <RefreshIcon />
-                    </Button>
+                        Refresh PDF &nbsp; <RefreshIcon />
+                    </Button> */}
                 </Box>
             </Box>
             <Box mt={4}>

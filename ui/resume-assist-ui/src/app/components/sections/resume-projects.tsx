@@ -1,46 +1,50 @@
 'use client';
 import { useState } from 'react';
-import { TextField, Typography, Box, Paper, IconButton, Button, Divider } from '@mui/material';
+import { TextField, Typography, Checkbox, Box, Paper, IconButton, FormGroup, FormControlLabel, Button, Divider } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
+import dayjs from 'dayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { Add, Edit, Delete } from '@mui/icons-material';
 import { green, blue, purple } from "@mui/material/colors"
 
 export default function Projects({ onResumeChange, resume, job }) {
-    const [experiences, setExperiences] = useState([]);
-    const [editExperienceMode, setEditExperienceMode] = useState<{ experienceId: number | null } | null>(null);
+    const [projects, setProjects] = useState([]);
+    const [editProjectMode, setEditProjectMode] = useState<{ projectId: number | null } | null>(null);
     const [newHighlight, setNewHighlight] = useState<{ id: number, hid: number, value: string } | null>(null);
   
-    const handleAddExperience = () => {
-      const newId = experiences.length + 1;
-      setExperiences([...experiences, { id: newId, projectName: '', startDate: null, endDate: null, url: '', highlights: [] }]);
+    const handleAddProject = () => {
+      const newId = projects.length + 1;
+      setProjects([...projects, { id: newId, projectName: '', startDate: null, endDate: null, url: '', current: false, highlights: [] }]);
     };
   
-    const handleRemoveExperience = (experienceId) => {
-      setExperiences(prevExperiences => {
-        const filteredExperiences = prevExperiences.filter(exp => exp.id !== experienceId);
-        return filteredExperiences.map((exp, index) => ({
+    const handleRemoveProject = (projectId) => {
+      setProjects(prevProjects => {
+        const filteredProjects = prevProjects.filter(exp => exp.id !== projectId);
+        return filteredProjects.map((exp, index) => ({
           ...exp,
           id: index + 1 // Numbering IDs based on their order in the list
         }));
       });
     };
 
-    const handleExperienceFieldChange = (experienceId, field, value) => {
-      setExperiences(experiences.map(exp => exp.id === experienceId ? {...exp, [field]: value} : exp));
+    const handleProjectFieldChange = (projectId, field, value) => {
+      setProjects(projects.map(exp => exp.id === projectId ? {...exp, [field]: value} : exp));
     }
   
-    const handleAddHighlight = (experience) => {
-      const id = experience.highlights.length + 1;
-      setExperiences(experiences.map(exp => exp.id === experience.id ? { ...exp, highlights: [...exp.highlights, { id: id, value: "new highlight" }] } : exp));
+    const handleAddHighlight = (project) => {
+      const id = project.highlights.length + 1;
+      setProjects(projects.map(exp => exp.id === project.id ? { ...exp, highlights: [...exp.highlights, { id: id, value: "new highlight" }] } : exp));
     };
   
-    const handleRemoveHighlight = (experienceId, hId) => {
-      setExperiences(experiences.map(exp => exp.id === experienceId ? { ...exp, highlights: exp.highlights.filter(h => h.id !== hId) } : exp));
+    const handleRemoveHighlight = (projectId, hId) => {
+      setProjects(projects.map(exp => exp.id === projectId ? { ...exp, highlights: exp.highlights.filter(h => h.id !== hId) } : exp));
     };
   
     const handleHighlightChange = () => {
-      setExperiences(experiences.map(exp => exp.id === newHighlight.id ? { 
+      setProjects(projects.map(exp => exp.id === newHighlight.id ? { 
         ...exp, 
         highlights: exp.highlights.map(h => h.id === newHighlight.hid ? { ...h, value: newHighlight.value } : h) 
       } : exp));
@@ -48,18 +52,25 @@ export default function Projects({ onResumeChange, resume, job }) {
     };
 
 
-    const handleAssist = async () => {
-      console.log(resume, job, experiences);
+    const handleAssist = async (project) => {
       try {
           // Send a POST request to your backend
-          const response = await fetch('/work/assist', {
+          console.log(project);
+          const response = await fetch('/api/project/assist', {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json',
               },
-              body: JSON.stringify({ resume: resume }),
+              body: JSON.stringify({ resume: resume, project: project }),
           });
-  
+          const results = await response.json();
+          const updatedHighlights = results.map((r, idx) => { 
+            const highlight = {
+              id: project.id, hid: idx, value: r
+            }; 
+            return highlight; 
+          });
+          handleProjectFieldChange(project.id, "highlights", updatedHighlights);
           if (!response.ok) {
               throw new Error('Network response was not ok');
           }
@@ -68,10 +79,38 @@ export default function Projects({ onResumeChange, resume, job }) {
       }
     };
   
-    const handleSaveAll = () => {
+    const handleSaveAll = async () => {
+      const projectPayload = projects.map(exp => {
+        const map = {
+          id: exp.id,
+          project_name: exp.projectName,
+          start_date: dayjs(exp.startDate).format("MM/YYYY"),
+          end_date: exp.endDate? dayjs(exp.endDate).format("MM/YYYY") : "",
+          url: exp.url,
+          current: exp.current,
+          highlights: exp.highlights.map(h => h.value),
+        };
+        return map;
+      });
+      try {
+        // Send a POST request to your backend
+        const response = await fetch(`/api/project/save/${resume.id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(projectPayload),
+        });
+  
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+      } catch (error) {
+          console.error('Failed to refresh PDF:', error);
+      }
       onResumeChange({
           ...resume,
-          projects: experiences,
+          projects: projectPayload,
       });
     }
     
@@ -90,7 +129,7 @@ export default function Projects({ onResumeChange, resume, job }) {
                   backgroundColor: purple[500], // Change color on hover
                 },
               }}
-              onClick={handleAddExperience}
+              onClick={handleAddProject}
             >
               <AddIcon/>
             </Button>
@@ -108,7 +147,7 @@ export default function Projects({ onResumeChange, resume, job }) {
               Save All
             </Button>
           </Box>
-          {experiences.length === 0 && (
+          {projects.length === 0 && (
             <Paper
               elevation={0}
               sx={{
@@ -129,35 +168,33 @@ export default function Projects({ onResumeChange, resume, job }) {
               </Typography>
             </Paper>
           )}
-          {experiences.map(exp => (
+          {projects.map(exp => (
             <Paper key={exp.id} elevation={2} className="p-4 mb-4">
                 <Box display="flex" className="gap-2 mb-0" alignItems="center" mb={1}>
                   <Typography variant="h6" flexGrow={1}>#{exp.id}</Typography>
-                  {editExperienceMode?.experienceId !== exp.id && (
+                  {editProjectMode?.projectId !== exp.id && (
                     <>
                       <IconButton
                         size="small"
                         aria-controls="category-menu"
                         aria-haspopup="true"
-                        onClick={() => setEditExperienceMode({ experienceId: exp.id })}
+                        onClick={() => setEditProjectMode({ projectId: exp.id })}
                         >
                         <Edit />
                       </IconButton>
-                      <IconButton size="small" onClick={() => handleRemoveExperience(exp.id)}>
+                      <IconButton size="small" onClick={() => handleRemoveProject(exp.id)}>
                         <Delete />
                       </IconButton>
                     </>
                   )}
               </Box>
-              <Box className="grid grid-cols-4 gap-4 mb-0">
-                <Typography variant="subtitle1" className='col-span-2'>Project Name</Typography>
-              </Box>
               <Box className="grid grid-cols-4 gap-4 mb-4">
                 <TextField
                   variant="outlined"
                   size="small"
+                  label="Project Name"
                   value={exp.projectName}
-                  disabled={editExperienceMode?.experienceId !== exp.id}
+                  disabled={editProjectMode?.projectId !== exp.id}
                   fullWidth
                   sx={{
                     '& .MuiInputBase-root.Mui-disabled': {
@@ -165,20 +202,16 @@ export default function Projects({ onResumeChange, resume, job }) {
                     },
                   }}
                   className='col-span-4'
-                  onChange={(e) => handleExperienceFieldChange(exp.id, "projectName", e.target.value)}
+                  onChange={(e) => handleProjectFieldChange(exp.id, "projectName", e.target.value)}
                 />
-              </Box>
-              <Box className="grid grid-cols-12 gap-4 mb-0">
-                <Typography variant="subtitle1" className='col-span-6'>Codebase</Typography>
-                <Typography variant="subtitle1" className='col-span-3'>Start Date</Typography>
-                <Typography variant="subtitle1" className='col-span-3'>End Date</Typography>
               </Box>
               <Box className="grid grid-cols-12 gap-4 mb-2">
                 <TextField
                   variant="outlined"
                   size="small"
+                  label="Codebase Link"
                   value={exp.url}
-                  disabled={editExperienceMode?.experienceId !== exp.id}
+                  disabled={editProjectMode?.projectId !== exp.id}
                   fullWidth
                   sx={{
                     '& .MuiInputBase-root.Mui-disabled': {
@@ -186,50 +219,72 @@ export default function Projects({ onResumeChange, resume, job }) {
                     },
                   }}
                   className='col-span-6'
-                  onChange={(e) => handleExperienceFieldChange(exp.id, "url", e.target.value)}
+                  onChange={(e) => handleProjectFieldChange(exp.id, "url", e.target.value)}
                 />
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  value={exp.startDate}
-                  disabled={editExperienceMode?.experienceId !== exp.id}
-                  fullWidth
-                  sx={{
-                    '& .MuiInputBase-root.Mui-disabled': {
-                      backgroundColor: 'grey.100',
-                    },
-                  }}
-                  className='col-span-3'
-                  type="month"
-                  onChange={(e) => handleExperienceFieldChange(exp.id, "startDate", e.target.value)}
-                />
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  value={exp.endDate}
-                  disabled={editExperienceMode?.experienceId !== exp.id}
-                  fullWidth
-                  sx={{
-                    '& .MuiInputBase-root.Mui-disabled': {
-                      backgroundColor: 'grey.100',
-                    },
-                  }}
-                  inputProps={{
-                    min: exp.startDate // Ensure endDate is after startDate
-                  }}
-                  className='col-span-3'
-                  type="month"
-                  onChange={(e) => handleExperienceFieldChange(exp.id, "endDate", e.target.value)}
-                />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <MobileDatePicker 
+                    label="Start Date"
+                    disableFuture={true}
+                    value={exp.startDate}
+                    disabled={editProjectMode?.projectId !== exp.id}
+                    fullWidth
+                    slotProps={{ textField: { size: 'small' } }}
+                    sx={{
+                      '& .MuiInputBase-root.Mui-disabled': {
+                        backgroundColor: 'grey.100',
+                      },
+                    }}
+                    className='col-span-2'
+                    maxDate={exp.endDate}
+                    format="YYYY/MM"
+                    views={['month', 'year']}
+                    onChange={(value) => handleProjectFieldChange(exp.id, "startDate", value)}
+                  />
+                </LocalizationProvider>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <MobileDatePicker 
+                    label="End Date"
+                    disableFuture={true}
+                    value={exp.current ? null : exp.endDate}
+                    disabled={editProjectMode?.projectId !== exp.id || exp.current}
+                    fullWidth
+                    slotProps={{ textField: { size: 'small' } }}
+                    sx={{
+                      '& .MuiInputBase-root.Mui-disabled': {
+                        backgroundColor: 'grey.100',
+                      },
+                    }}
+                    inputProps={{
+                      min: exp.startDate // Ensure endDate is after startDate
+                    }}
+                    minDate={exp.startDate}
+                    className='col-span-2 pb-0'
+                    format="YYYY/MM"
+                    views={['month', 'year']}
+                    onChange={(value) => handleProjectFieldChange(exp.id, "endDate", value)}
+                  />
+                </LocalizationProvider>
+                <FormGroup>
+                  <FormControlLabel 
+                    control={<Checkbox 
+                      disabled={editProjectMode?.projectId !== exp.id}
+                      checked={exp.current}
+                      onChange={(e) => handleProjectFieldChange(exp.id, "current", e.target.checked)}
+                    />} 
+                    label={<span className="text-black">Current</span>}
+                    labelPlacement="end"
+                    sx={{fontcolor: "black"}}
+                    className='pl-1'
+                  />
+                </FormGroup>
               </Box>
-              <Typography variant="subtitle1" className='mb-2'>Highlights</Typography>
-              {exp.highlights.map((h) => (
+              <Typography variant="subtitle1" className='pl-1 mb-2 pb-2 underline italic'>Highlights</Typography>
+              {exp.highlights.map((h, idx) => (
                 <>
                   {newHighlight?.id === exp.id && newHighlight?.hid === h.id && (
-                    <Box mb={2} p={2} sx={{ border: '1px solid #ccc', borderRadius: '4px' }}>
-                      <Box display="flex" className="gap-2" alignItems="center">
+                    <Box key={idx} mb={2} p={1} sx={{ border: '1px solid #ccc', borderRadius: '4px' }}>
+                      <Box display="flex" className="gap-2 p-0" alignItems="center">
                         <TextField
-                          label="# Edit Highlight"
                           variant='filled'
                           value={newHighlight.value}
                           onChange={(e) => setNewHighlight({ id: newHighlight.id, hid: newHighlight.hid, value: e.target.value })}
@@ -242,8 +297,9 @@ export default function Projects({ onResumeChange, resume, job }) {
                           }}
                           InputProps={{
                             style: {
+                              paddingTop: '0.3rem',
                               fontSize: '0.9rem',
-                              lineHeight: '1.2rem'
+                              lineHeight: '1rem'
                             },
                           }}
                         />
@@ -269,7 +325,7 @@ export default function Projects({ onResumeChange, resume, job }) {
                       </Box>
                     </Box>
                   ) }
-                  <Box key={h.id} className="flex items-center gap-2 mb-2">
+                  {(newHighlight?.id !== exp.id || newHighlight?.hid !== h.id) && (<Box key={h.id} className="flex items-center gap-2 mb-2">
                     <Typography 
                       variant="subtitle1" 
                       flexGrow={1} 
@@ -279,7 +335,7 @@ export default function Projects({ onResumeChange, resume, job }) {
                       }}> ⦿  {h.value}
                     </Typography>
                     
-                    {editExperienceMode?.experienceId === exp.id && (
+                    {editProjectMode?.projectId === exp.id && (
                       <IconButton
                         sx = {{
                           width: "15px",
@@ -293,7 +349,7 @@ export default function Projects({ onResumeChange, resume, job }) {
                         <Edit />
                       </IconButton>
                     )}
-                    {editExperienceMode?.experienceId == exp.id && (
+                    {editProjectMode?.projectId == exp.id && (
                       <IconButton 
                         sx = {{
                           width: "15px",
@@ -307,10 +363,10 @@ export default function Projects({ onResumeChange, resume, job }) {
                         <CloseIcon />
                       </IconButton>
                     )}
-                  </Box>
+                  </Box>)}
                 </>
               ))}
-              {editExperienceMode?.experienceId === exp.id && (
+              {editProjectMode?.projectId === exp.id && (
                 <Box mt={2} display="flex" justifyContent="space-between">
                   <Box flexGrow={1}>
                     <Button
@@ -334,7 +390,7 @@ export default function Projects({ onResumeChange, resume, job }) {
                         },
                         ml: 2, // Add margin-left to create space between buttons
                       }}
-                      onClick={handleAssist}
+                      onClick={() => handleAssist(exp)}
                     >
                       Assist
                     </Button>
@@ -349,7 +405,7 @@ export default function Projects({ onResumeChange, resume, job }) {
                           backgroundColor: green[500], // Change color on hover
                         },
                       }}
-                      onClick={() => setEditExperienceMode(null)}
+                      onClick={() => setEditProjectMode(null)}
                     >
                       Save
                     </Button>

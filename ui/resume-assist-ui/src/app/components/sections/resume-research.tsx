@@ -33,7 +33,7 @@ export default function Researches({ onResumeChange, resume }) {
     }
   
     const handleSaveAll = async () => {
-      const requestContent = researches.map(exp => {
+      const researches_body = researches.map(exp => {
         const map = {
           title: exp.title,
           authors: exp.authors,
@@ -42,7 +42,6 @@ export default function Researches({ onResumeChange, resume }) {
         };
         return map;
       });
-      console.log(requestContent);
       // Call the API to save the education data
       try {
         // Send a POST request to your backend
@@ -51,7 +50,7 @@ export default function Researches({ onResumeChange, resume }) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(requestContent),
+            body: JSON.stringify(researches_body),
         });
         
         if (!response.ok) {
@@ -63,7 +62,7 @@ export default function Researches({ onResumeChange, resume }) {
 
       onResumeChange({
           ...resume,
-          researches: researches,
+          researches: researches_body,
       });
     }
     

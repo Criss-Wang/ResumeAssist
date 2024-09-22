@@ -19,8 +19,6 @@ export default function PersonalInfo({ onResumeChange, resume }) {
             personal_info: personalInfo
         });
         
-        console.log("Basic Information: ", JSON.stringify(personalInfo));
-
         try {
             // Send a POST request to your backend
             const response = await fetch(`/api/personal-info/save/${resume.id}`, {

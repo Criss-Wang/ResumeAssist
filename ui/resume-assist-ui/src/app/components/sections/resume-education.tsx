@@ -34,7 +34,7 @@ export default function Education({ onResumeChange, resume }) {
     }
   
     const handleSaveAll = async () => {
-      const requestContent = educations.map(exp => {
+      const education_body = educations.map(exp => {
         const map = {
           institution: exp.institution,
           area: exp.area,
@@ -48,7 +48,6 @@ export default function Education({ onResumeChange, resume }) {
         };
         return map;
       });
-      console.log(requestContent);
       // Call the API to save the education data
       try {
         // Send a POST request to your backend
@@ -57,7 +56,7 @@ export default function Education({ onResumeChange, resume }) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(requestContent),
+            body: JSON.stringify(education_body),
         });
         
         if (!response.ok) {
@@ -69,7 +68,7 @@ export default function Education({ onResumeChange, resume }) {
 
       onResumeChange({
           ...resume,
-          educations: educations,
+          educations: education_body,
       })
     }
     
@@ -212,6 +211,7 @@ export default function Education({ onResumeChange, resume }) {
                         }}
                         className='col-span-2'
                         maxDate={exp.endDate}
+                        format="YYYY/MM"
                         views={['month', 'year']}
                         onChange={(value) => handleEducationFieldChange(exp.id, "startDate", value)}
                       />
@@ -234,6 +234,7 @@ export default function Education({ onResumeChange, resume }) {
                         }}
                         minDate={exp.startDate}
                         className='col-span-2 pb-0'
+                        format="YYYY/MM"
                         views={['month', 'year']}
                         onChange={(value) => handleEducationFieldChange(exp.id, "endDate", value)}
                       />
