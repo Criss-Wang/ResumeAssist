@@ -1,3 +1,6 @@
+
+from typing import List
+
 from fastapi import APIRouter, HTTPException, Request, Response
 from uuid import UUID
 
@@ -7,28 +10,30 @@ from resume_assist.agent_hub.enhancer_agent import EnhancerAgent
 
 
 work_experience_router = APIRouter(
-    prefix="/work-experience", tags=["Resume: Work Experience"]
+    prefix="/api/work", tags=["Resume: Work Experience"]
 )
 
 
-@work_experience_router.post("/{id}/save")
-def save_work_experience(id: UUID, request: Work):
+@work_experience_router.post("/save/{id}")
+def save_work_experience(id: UUID, request: List[Work]):
     try:
-        query = """
-        MERGE (w:Work {id: $id})
-        SET
-            w.company = $company,
-            w.location = $location,
-            w.role = $role,
-            w.start_date = $start_date,
-            w.end_date = $end_date,
-            w.highlights = $highlights
-        RETURN w
-        """
-        parameters = {"id": str(id), **request.model_dump()}
-        result = neo4j_client.query(query, parameters)
-        if not result:
-            raise HTTPException(500, "Failed to save work experience")
+        for experience in request:
+            query = """
+            MERGE (w:Work {id: $id})
+            SET
+                w.company = $company,
+                w.location = $location,
+                w.role = $role,
+                w.start_date = $start_date,
+                w.end_date = $end_date,
+                w.current = $current,
+                w.highlights = $highlights
+            RETURN w
+            """
+            parameters = {"id": str(id), **experience.model_dump()}
+            result = neo4j_client.query(query, parameters)
+            if not result:
+                raise HTTPException(500, "Failed to save work experience")
         return Response(status_code=200)
     except Exception as e:
         # logger.exception(e)
@@ -36,7 +41,7 @@ def save_work_experience(id: UUID, request: Work):
         raise HTTPException(500, "Unexpected error")
 
 
-@work_experience_router.get("/{id}", response_model=Work)
+@work_experience_router.get("/{id}", response_model=List[Work])
 def get_work_experience(id: UUID):
     try:
         query = """
@@ -47,8 +52,8 @@ def get_work_experience(id: UUID):
         result = neo4j_client.query(query, parameters)
         if not result:
             raise HTTPException(404, "Work experience not found")
-        work = result[0]["w"]
-        return Work(**work)
+        works = [Work(**record["w"]) for record in result]
+        return works
     except Exception as e:
         # logger.exception(e)
         print(e)
