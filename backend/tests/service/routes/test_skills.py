@@ -45,7 +45,7 @@ def test_save_skills(client, mock_neo4j_client):
         "categories": ["Category1", "Category2"],
         "skill_mapping": {"Category1": ["s1", "s2"], "Category2": ["s1", "s2"]},
     }
-    response = client.post(f"/skills/{test_id}/save", json=test_data)
+    response = client.post(f"/api/skills/save/{test_id}", json=test_data)
 
     assert response.status_code == 200
     assert mock_neo4j_client.query.called
@@ -62,7 +62,7 @@ def test_get_skills(client, mock_neo4j_client):
     }
     mock_neo4j_client.query.return_value = [{"sk": test_data}]
 
-    response = client.get(f"/skills/{test_id}")
+    response = client.get(f"/api/skills/{test_id}")
     assert response.status_code == 200
     print(response.json())
     assert response.json()["skill_mapping"]["Category1"] == ["s1", "s2"]
@@ -97,7 +97,7 @@ def test_assist_skills(client, mock_enhancer_agent):
         ],
     }
 
-    response = client.post("/skills/assist", json=test_data)
+    response = client.post("/api/skills/assist", json=test_data)
 
     assert response.status_code == 200
     assert response.json() == return_value

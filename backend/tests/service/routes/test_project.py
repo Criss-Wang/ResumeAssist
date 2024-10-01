@@ -72,7 +72,7 @@ def mock_neo4j_client():
 @pytest.fixture
 def client():
 
-    app = FastAPI()
+    app = FastAPI(debug=True)
     app.include_router(project_router)
     return TestClient(app)
 
@@ -93,18 +93,24 @@ def test_save_project(client, mock_neo4j_client):
                 "project_name": "Project X",
                 "start_date": "2023-01-01",
                 "end_date": "2023-12-31",
+                "url": "some_url",
+                "current": False,
                 "highlights": ["Achievement 1", "Achievement 2"],
             }
         }
     ]
     test_id = uuid.uuid4()
-    test_data = {
-        "project_name": "Project X",
-        "start_date": "2023-01-01",
-        "end_date": "2023-12-31",
-        "highlights": ["Achievement 1", "Achievement 2"],
-    }
-    response = client.post(f"/project/{test_id}/save", json=test_data)
+    test_data = [
+        {
+            "project_name": "Project X",
+            "url": "some_url",
+            "start_date": "2023-01-01",
+            "end_date": "2023-12-31",
+            "current": False,
+            "highlights": ["Achievement 1", "Achievement 2"],
+        }
+    ]
+    response = client.post(f"/api/project/save/{test_id}", json=test_data)
 
     assert response.status_code == 200
     assert mock_neo4j_client.query.called
@@ -115,16 +121,19 @@ def test_get_project(client, mock_neo4j_client):
     test_id = uuid.uuid4()
     test_data = {
         "project_name": "Project X",
+        "url": "some_url",
         "start_date": "2023-01-01",
         "end_date": "2023-12-31",
+        "current": False,
         "highlights": ["Achievement 1", "Achievement 2"],
     }
+
     mock_neo4j_client.query.return_value = [{"pr": test_data}]
 
-    response = client.get(f"/project/{test_id}")
+    response = client.get(f"/api/project/{test_id}")
 
     assert response.status_code == 200
-    assert response.json() == test_data
+    assert response.json() == [test_data]
 
 
 # Test case for POST /project/assist endpoint
@@ -157,13 +166,24 @@ def test_assist_project(
     ]
 
     mock_request_data = {
-        "company": "Example Company",
-        "position": "Project Manager",
-        "description": "Manage and oversee project execution.",
-        "highlights": ["Highlight 1", "Highlight 2"],
+        "resume": {},
+        "job_details": {
+            "company": "Example Company",
+            "position": "Project Manager",
+            "description": "Manage and oversee project execution.",
+            "url": "https://test.com",
+        },
+        "project": {
+            "project_name": "Project X",
+            "url": "some_url",
+            "start_date": "2023-01-01",
+            "end_date": "2023-12-31",
+            "current": False,
+            "highlights": ["Highlight 1", "Highlight 2"],
+        },
     }
 
-    response = client.post("/project/assist", json=mock_request_data)
+    response = client.post("/api/project/assist", json=mock_request_data)
 
     assert response.status_code == 200
     assert response.json() == ["Enhanced Highlight 1", "Enhanced Highlight 2"]
@@ -185,15 +205,13 @@ def test_assist_project(
     mock_retrieval_agent.retrieve.assert_called_once_with(
         indexer_txt="Example job summary", node_type="Project", refined_filter=False
     )
+
     mock_enhancer_agent.step.assert_any_call(
         {
-            "company": "Example Company",
-            "position": "Project Manager",
-            "description": "Manage and oversee project execution.",
-            "highlights": ["Highlight 1", "Highlight 2"],
             "keywords": ["keyword1", "keyword2"],
             "reference_chunks": "<Examples>\nHere are a list of examples of highlights that may be relevant to this job, use them as references points if necessary.\n\n----------\nExample 1: \n- Highlight 1\n- Highlight 2\n----------\nExample 2: \n- Highlight 3\n- Highlight 4\n\n</Examples>",
-            "previous_attempt": "Here is a previous attempt to improve this highlight that failed. Learn from the remark and try to create a bettern one if possible:\n<PreviousAttempt>\n- Enhanced Highlight 1\n- Enhanced Highlight 2\n</PreviousAttempt>\n\n<Remark>\nGood job!\n</Remark>",
+            "previous_attempt": "Here is a previous attempt to improve this highlight that failed. Learn from the remark and try to create a bettern one if possible:\n<PreviousAttempt>\n- Enhanced Highlight 1\n- Enhanced Highlight 2\n</PreviousAttempt>\n\n<Remark>\nBad job!\n</Remark>",
+            "highlights": ["Highlight 1", "Highlight 2"],
             "last_enhanced_version": ["Enhanced Highlight 1", "Enhanced Highlight 2"],
         }
     )
@@ -202,7 +220,6 @@ def test_assist_project(
         ["Enhanced Highlight 1", "Enhanced Highlight 2"],
         "Company: Example Company\n----------\nRole: Project Manager\n----------\nJob Description: Manage and oversee project execution.",
     )
-
     mock_reviewer_agent.review.side_effect = [
         (4, "Bad job!"),
         (4, "Bad job!"),
@@ -210,7 +227,7 @@ def test_assist_project(
         (4, "worst job!"),
     ]
 
-    response = client.post("/project/assist", json=mock_request_data)
+    response = client.post("/api/project/assist", json=mock_request_data)
 
     assert response.status_code == 200
     assert response.json() == ["Enhanced Highlight 1", "Enhanced Highlight 2"]

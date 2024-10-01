@@ -32,18 +32,20 @@ def test_client():
 
 def test_save_work_experience(mock_neo4j_client, test_client):
     mock_neo4j_client.query.return_value = [{"w": {"id": str(uuid4())}}]
-
-    work_data = {
-        "company": "Test Company",
-        "location": "Test Location",
-        "role": "Test Role",
-        "start_date": "2022-01-01",
-        "end_date": "2023-01-01",
-        "highlights": ["Highlight 1", "Highlight 2"],
-    }
+    work_data = [
+        {
+            "company": "Test Company",
+            "location": "Test Location",
+            "role": "Test Role",
+            "start_date": "2022-01-01",
+            "end_date": "2023-01-01",
+            "current": False,
+            "highlights": ["Highlight 1", "Highlight 2"],
+        }
+    ]
 
     response = test_client.post(
-        "/work-experience/{id}/save".format(id=uuid4()), json=work_data
+        "/api/work/save/{id}".format(id=uuid4()), json=work_data
     )
 
     assert response.status_code == 200
@@ -60,15 +62,16 @@ def test_get_work_experience(mock_neo4j_client, test_client):
                 "role": "role",
                 "start_date": "s",
                 "end_date": "e",
+                "current": False,
                 "highlights": ["h1"],
             }
         }
     ]
 
-    response = test_client.get("/work-experience/{id}".format(id=uuid4()))
+    response = test_client.get("/api/work/{id}".format(id=uuid4()))
 
     assert response.status_code == 200
-    assert response.json()["company"] == "Test Company"
+    assert response.json()[0]["company"] == "Test Company"
     assert mock_neo4j_client.query.call_count == 1
 
 
@@ -86,7 +89,7 @@ def test_assist_work_experience(mock_enhancer_agent, test_client):
         "highlights": ["highlight 1", "highlight 2", "highlight 3"],
     }
 
-    response = test_client.post("/work-experience/assist", json=info_vars)
+    response = test_client.post("/api/work/assist", json=info_vars)
 
     assert response.status_code == 200
     assert response.json() == ["AI Highlight 1", "AI Highlight 2"]

@@ -7,9 +7,9 @@
       You are a professional resume building agent. You will be given three sections of my resume: Skills, Work Experience and Project Experience. Please come up with a professional self-introduction that's tailered to the job I'm applying for.
   user:
     value: >
-      The job I'm applying to is the "{role}" role at "{company}". The job descrption is:
+      The job I'm applying to is the "{position}" role at "{company}". The job descrption is:
       
-      {job_description}
+      {description}
       
       ### Skills section
 

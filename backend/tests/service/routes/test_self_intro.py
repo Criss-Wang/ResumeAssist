@@ -32,11 +32,16 @@ def mock_summary_agent():
 # Test case for POST /self-intro/{id}/save endpoint
 def test_save_self_intro(client, mock_neo4j_client):
     mock_neo4j_client.query.return_value = [
-        {"si": {"id": str(uuid4()), "content": "Introduction Content"}}
+        {
+            "si": {
+                "title": "test title",
+                "content": "Introduction Content",
+            }
+        }
     ]
-    test_id = uuid4()
-    test_data = {"content": "Introduction Content"}
-    response = client.post(f"/self-intro/{test_id}/save", json=test_data)
+    test_id = str(uuid4())
+    test_data = {"title": "test title", "content": "Introduction Content"}
+    response = client.post(f"/api/self-intro/save/{test_id}", json=test_data)
 
     assert response.status_code == 200
     assert mock_neo4j_client.query.called
@@ -44,14 +49,13 @@ def test_save_self_intro(client, mock_neo4j_client):
 
 # Test case for GET /self-intro/{id} endpoint
 def test_get_self_intro(client, mock_neo4j_client):
-    test_id = uuid4()
-    test_data = {"content": "Introduction Content"}
+    test_data = {"title": "test title", "content": "Introduction Content"}
     mock_neo4j_client.query.return_value = [{"si": test_data}]
 
-    response = client.get(f"/self-intro/{test_id}")
+    response = client.get(f"/api/self-intro/all")
 
     assert response.status_code == 200
-    assert response.json() == test_data
+    assert response.json() == [test_data]
 
 
 # Test case for POST /self-intro/assist endpoint
@@ -62,8 +66,8 @@ def test_assist_self_intro(client, mock_summary_agent):
 
     test_data = {
         "company": "some company",
-        "role": "some role",
-        "job_description": "some job description",
+        "position": "some role",
+        "description": "some job description",
         "skills": {"category 1": ["s1", "s2"], "category 2": ["s1", "s2"]},
         "work_experiences": [
             {
@@ -98,7 +102,7 @@ def test_assist_self_intro(client, mock_summary_agent):
         "word_limit": 100,
     }
 
-    response = client.post("/self-intro/assist", json=test_data)
+    response = client.post("/api/self-intro/assist", json=test_data)
 
     assert response.status_code == 200
     assert response.json() == "Assisted Introduction"

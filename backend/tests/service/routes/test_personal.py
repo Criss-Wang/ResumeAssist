@@ -48,7 +48,7 @@ def test_save_personal_info(client, mock_neo4j_client):
         "linkedin": "johndoe",
         "website": "https://johndoe.com",
     }
-    response = client.post(f"/personal-info/{test_id}", json=test_data)
+    response = client.post(f"/api/personal-info/save/{test_id}", json=test_data)
 
     assert response.status_code == 200
     assert mock_neo4j_client.query.called
@@ -58,8 +58,7 @@ def test_save_personal_info(client, mock_neo4j_client):
 def test_get_personal_info(client, mock_neo4j_client):
     test_id = uuid.uuid4()
     test_data = {
-        "first_name": "John",
-        "last_name": "Doe",
+        "name": "John Doe",
         "email": "john.doe@example.com",
         "phone": "123456789",
         "github": "johndoe",
@@ -68,7 +67,7 @@ def test_get_personal_info(client, mock_neo4j_client):
     }
     mock_neo4j_client.query.return_value = [{"pi": test_data}]
 
-    response = client.get(f"/personal-info/{test_id}")
+    response = client.get(f"/api/personal-info/{test_id}")
 
     assert response.status_code == 200
     assert response.json() == test_data

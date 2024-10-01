@@ -72,6 +72,13 @@ async def assist_project(request: Request):
     try:
         info_vars = await request.json()
 
+        resume_info = info_vars["resume"]
+        job_info = info_vars["job_details"]
+        project_info = info_vars["project"]
+        info_vars.update(**resume_info)
+        info_vars.update(**job_info)
+        info_vars.update(**project_info)
+
         summary_agent = SummaryAgent("project")
         keyword_agent = KeywordExtractionAgent("project")
         retrieval_agent = RetrievalAgent("project", use_prompt=False)
@@ -81,7 +88,6 @@ async def assist_project(request: Request):
         job_description = build_full_job_description(
             info_vars["company"], info_vars["position"], info_vars["description"]
         )
-
         job_summary = summary_agent.step(
             {
                 "company": info_vars["company"],
@@ -89,24 +95,28 @@ async def assist_project(request: Request):
                 "job_description": info_vars["description"],
             }
         )
-        info_vars["keywords"] = keyword_agent.extract_keywords(job_description)
-        info_vars["reference_chunks"] = build_reference_chunks_str(
+
+        enhancement_info = {}
+        enhancement_info["keywords"] = keyword_agent.extract_keywords(job_description)
+        enhancement_info["reference_chunks"] = build_reference_chunks_str(
             retrieval_agent.retrieve(
                 indexer_txt=job_summary, node_type="Project", refined_filter=False
             ),
             chunk_parser=build_highlight_str,
         )
-        info_vars["previous_attempt"] = ""
+        enhancement_info["previous_attempt"] = ""
+        enhancement_info["highlights"] = info_vars["highlights"]
 
         num_retries = 0
         while True:
             original_highlights = info_vars["highlights"]
-            ai_assisted_highlights = enhancer_agent.step(info_vars)
+
+            ai_assisted_highlights = enhancer_agent.step(enhancement_info.copy())
             grade, remark = reviewer_agent.review(
                 original_highlights, ai_assisted_highlights, job_description
             )
-            info_vars["last_enhanced_version"] = ai_assisted_highlights
-            info_vars["previous_attempt"] = build_previous_attempt_str(
+            enhancement_info["last_enhanced_version"] = ai_assisted_highlights
+            enhancement_info["previous_attempt"] = build_previous_attempt_str(
                 ai_assisted_highlights, remark
             )
             if grade >= 8:
