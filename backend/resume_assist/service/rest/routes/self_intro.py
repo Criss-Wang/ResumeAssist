@@ -38,38 +38,35 @@ async def assist_self_intro(request: Request):
     try:
         agent = SummaryAgent("self-intro")
         info_vars = await request.json()
-        # info_vars = json.loads(info_vars)
         print(info_vars)
         info_vars = {
-            "title": info_vars['intro']['title'],
-            "content": info_vars['intro']['content']
+            "title": info_vars["intro"]["title"],
+            "content": info_vars["intro"]["content"],
         }
-        # ai_assisted_intro = agent.step(info_vars)
-        # return ai_assisted_intro
-        return "sample answer"
+        ai_assisted_intro = agent.step(info_vars)
+        return ai_assisted_intro
     except Exception as e:
-        # logger.exception(e)
         print(e)
         raise HTTPException(500, "Unexpected error")
 
 
-@self_intro_router.post("/{id}", response_model=Intro)
-def get_self_intro(id: UUID):
-    try:
-        query = """
-        MATCH (si:SelfIntro {id: $id})
-        RETURN si
-        """
-        parameters = {"id": str(id)}
-        result = neo4j_client.query(query, parameters)
-        if not result:
-            raise HTTPException(404, "Self Introduction not found")
-        self_intro = result[0]["si"]
-        return Intro(**self_intro)
-    except Exception as e:
-        # logger.exception(e)
-        print(e)
-        raise HTTPException(500, "Unexpected error")
+# @self_intro_router.post("/{id}", response_model=Intro)
+# def get_self_intro(id: UUID):
+#     try:
+#         query = """
+#         MATCH (si:SelfIntro {id: $id})
+#         RETURN si
+#         """
+#         parameters = {"id": str(id)}
+#         result = neo4j_client.query(query, parameters)
+#         if not result:
+#             raise HTTPException(404, "Self Introduction not found")
+#         self_intro = result[0]["si"]
+#         return Intro(**self_intro)
+#     except Exception as e:
+#         # logger.exception(e)
+#         print(e)
+#         raise HTTPException(500, "Unexpected error")
 
 
 @self_intro_router.get("/all", response_model=List[Intro])
