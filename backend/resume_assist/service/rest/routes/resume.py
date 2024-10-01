@@ -11,20 +11,18 @@ from resume_assist.utilities.embedding_utils import get_indexer_embedding
 from resume_assist.agent_hub.summary_agent import SummaryAgent
 
 
-resume_router = APIRouter(prefix="/resume", tags=["Resume: Complete"])
+resume_router = APIRouter(prefix="/api/resume", tags=["Resume: Complete"])
 
 
-@resume_router.post("/{id}/save")
-def save_resume(id: UUID, request: ResumeRequest):
+@resume_router.post("/save/{id}")
+def save_resume(id: UUID, request: Resume):
+    # save all elements in the resume
+    # render the pdf
+    # save the relationships
     try:
         query = """
         MERGE (r:Resume {id: $id})
         SET r.embedding = $embedding
-
-        WITH r
-        MATCH (ao:AddonInfo {id: $id})
-        SET ao.embedding = $embedding
-        MERGE (r)-[:HAS_ADDON]->(ao)
 
         WITH r
         MATCH (j:Job {id: $id})
@@ -96,14 +94,13 @@ def get_resume(id: UUID):
     try:
         query = """
         MATCH (r:Resume {id: $id})
-        OPTIONAL MATCH (r)-[:HAS_ADDON]->(addon_info:AddonInfo)
         OPTIONAL MATCH (r)-[:FOR_JOB]->(job_details:Job)
         OPTIONAL MATCH (r)-[:HAS_PERSONAL_INFO]->(personal_info:PersonalInfo)
         OPTIONAL MATCH (r)-[:HAS_SELF_INTRO]->(intro:SelfIntro)
         OPTIONAL MATCH (r)-[:HAS_SKILLS]->(skills:Skills)
         OPTIONAL MATCH (r)-[:HAS_PROJECT]->(pr:Project)
         OPTIONAL MATCH (r)-[:HAS_WORK]->(w:Work)
-        RETURN r, addon_info, job_details, personal_info, intro, skills,
+        RETURN r, job_details, personal_info, intro, skills,
             COLLECT(DISTINCT pr) as projects,
             COLLECT(DISTINCT w) as works
         """
