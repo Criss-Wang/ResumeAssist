@@ -12,7 +12,14 @@ logger = logging.getLogger(__name__)
 
 
 class RenderAgent(Agent):
-    # def step(self, input_vars: Dict) -> List[str]:
+    def step(self, input_vars: Dict) -> List[str]:
+        try:
+            self.run_render(input_vars)
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
     #     system_prompt = self.prompt.system.value
     #     user_prompt = self.prompt.user.value
     #     messages = [
@@ -24,11 +31,19 @@ class RenderAgent(Agent):
     #         return parse_skill_pts(output)
     #     return parse_to_bullet_pts(output)
 
-    # def run_render(self, resume_name: str) -> None:
-    #     cv = build_cv(personal, education, work, skills,
-    #                   projects, publications, summary)
-    #     design = build_design(margins)
-    #     render_pdf(cv, design, resume_name)
+    def run_render(self, cv_info, resume_name: str = "Resume") -> None:
+        personal = cv_info["personal"]
+        education = cv_info["education"]
+        work = cv_info["work"]
+        skills = cv_info["skills"]
+        projects = cv_info["projects"]
+        publications = cv_info["publications"]
+        summary = cv_info["summary"]
+        cv = build_cv(
+            personal, education, work, skills, projects, publications, summary
+        )
+        design = build_design()
+        render_pdf(cv, design, resume_name)
 
     def get_agent_name(self):
         return "renderer"
