@@ -60,6 +60,7 @@ export default function Skills({ onResumeChange, resume, job }) {
 
     const handleAssist = async () => {
         try {
+            console.log({ resume: resume, job: job, categories: categories });
             // Send a POST request to your backend
             const response = await fetch('/api/skills/assist', {
                 method: 'POST',

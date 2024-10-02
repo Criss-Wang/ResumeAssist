@@ -140,3 +140,5 @@ tests/data/*.json
 
 .vscode/
 *.db
+
+*.pdf

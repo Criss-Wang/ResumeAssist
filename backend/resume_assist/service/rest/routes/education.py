@@ -12,6 +12,7 @@ education_router = APIRouter(prefix="/api/education", tags=["Resume: Education"]
 
 @education_router.post("/save/{id}")
 def save_education(id: UUID, request: List[Education]):
+    
     try:
         for education in request:
             query = """

@@ -9,6 +9,7 @@ from resume_assist.io.db.engine import neo4j_client
 from resume_assist.utilities.embedding_utils import get_indexer_embedding
 
 from resume_assist.agent_hub.render_agent import RenderAgent
+from resume_assist.agent_hub.summary_agent import SummaryAgent
 
 
 resume_router = APIRouter(prefix="/api/resume", tags=["Resume: Complete"])

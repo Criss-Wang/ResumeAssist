@@ -15,9 +15,9 @@
       Do not output anything else like explanations.
   user:
     value: >
-      The job I'm applying to is the "{role}" role at "{company}". The job descrption is:
+      The job I'm applying to is the "{position}" role at "{company}". The job descrption is:
       
-      {job_description}
+      {description}
       
       ### Skills section
 

@@ -49,6 +49,7 @@ export default function Education({ onResumeChange, resume }) {
         return map;
       });
       // Call the API to save the education data
+      console.log(JSON.stringify(education_body));
       try {
         // Send a POST request to your backend
         const response = await fetch(`/api/education/save/${resume.id}`, {

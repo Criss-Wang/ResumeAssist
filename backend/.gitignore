@@ -3,3 +3,4 @@ docker/data/*
 .env
 resume_assist/notebooks/*
 .flake8
+.pdf
