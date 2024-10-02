@@ -1,10 +1,9 @@
 import json
-from typing import List
 
 from fastapi import APIRouter, HTTPException, Response
 from uuid import UUID
 
-from resume_assist.service.rest.data_model.resume_model import Resume, ResumeRequest
+from resume_assist.service.rest.data_model.resume_model import Resume
 from resume_assist.io.db.engine import neo4j_client
 from resume_assist.utilities.embedding_utils import get_indexer_embedding
 
@@ -20,7 +19,7 @@ def save_resume(id: UUID, request: Resume):
     # save all elements in the resume
     # render the pdf
     render_agent = RenderAgent("render", use_prompt=False)
-    render_agent.step()
+    render_agent.step(request)
     # save the relationships
     try:
         query = """
