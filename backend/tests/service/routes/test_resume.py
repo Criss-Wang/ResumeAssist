@@ -8,6 +8,88 @@ from resume_assist.service.rest.routes.resume import resume_router
 
 client = TestClient(resume_router)
 
+FULL_PAYLOAD = {
+    "id": "b9641efd-6b3a-4090-9be4-9916f40666f7",
+    "job_details": {
+        "position": "fdas",
+        "company": "fdsa",
+        "url": "fdas",
+        "description": "fasfdsadf"
+    },
+    "personal_info": {
+        "name": "fda",
+        "email": "fdsafas",
+        "linkedin": "fdsa",
+        "github": "fdsa",
+        "phone": "fdsa",
+        "website": "fdsa"
+    },
+    "researches": [
+        {
+            "title": "fdsa",
+            "authors": "fdsafsa",
+            "conference": "fdsa",
+            "date": "08/2024"
+        }
+    ],
+    "educations": [
+        {
+            "institution": "fda",
+            "area": "fdsafsadf",
+            "degree": "dadsafdsaf",
+            "current": True,
+            "gpa": "fdsafdsa",
+            "courses": "fdafsaf",
+            "other": "fdsafas;fdsafdsafafdsa",
+            "start_date": "07/2024",
+            "end_date": ""
+        }
+    ],
+    "self_intro": {
+        "content": "fdafdsafds",
+        "title": "fdsa-fdas"
+    },
+    "skills": {
+        "categories": [
+            "New Category 1"
+        ],
+        "skill_mapping": {
+            "New Category 1": [
+                "New Skill 1",
+                "New Skill 2"
+            ]
+        }
+    },
+    "work": [
+        {
+            "id": 1,
+            "company": "fdsa",
+            "role": "df",
+            "location": "fdafsa",
+            "start_date": "01/2024",
+            "end_date": "08/2024",
+            "current": False,
+            "highlights": [
+                "new highlight"
+            ]
+        }
+    ],
+    "projects": [
+        {
+            "id": 1,
+            "project_name": "llm-benchmark",
+            "start_date": "Invalid Date",
+            "end_date": "",
+            "url": "fdsafsa",
+            "current": True,
+            "highlights": [
+                "new highlight"
+            ]
+        }
+    ],
+    "additional_info": {}
+}
+
 
 @pytest.fixture
 def resume_request():
