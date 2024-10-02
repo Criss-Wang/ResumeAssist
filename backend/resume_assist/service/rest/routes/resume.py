@@ -8,7 +8,7 @@ from resume_assist.service.rest.data_model.resume_model import Resume, ResumeReq
 from resume_assist.io.db.engine import neo4j_client
 from resume_assist.utilities.embedding_utils import get_indexer_embedding
 
-from resume_assist.agent_hub.summary_agent import SummaryAgent
+from resume_assist.agent_hub.render_agent import RenderAgent
 
 
 resume_router = APIRouter(prefix="/api/resume", tags=["Resume: Complete"])
@@ -18,6 +18,8 @@ resume_router = APIRouter(prefix="/api/resume", tags=["Resume: Complete"])
 def save_resume(id: UUID, request: Resume):
     # save all elements in the resume
     # render the pdf
+    render_agent = RenderAgent("render", use_prompt=False)
+    render_agent.step()
     # save the relationships
     try:
         query = """
