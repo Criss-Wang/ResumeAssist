@@ -13,10 +13,101 @@ from resume_assist.agent_hub.enhancer_agent import EnhancerAgent
 from resume_assist.agent_hub.reviewer_agent import ReviewerAgent
 from resume_assist.utilities.formatting_utils import (
     build_full_job_description,
-    build_reference_chunks_str,
-    build_previous_attempt_str,
-    build_highlight_str,
 )
+
+FULL_PAYLOAD = {
+    "resume": {
+        "id": "b9641efd-6b3a-4090-9be4-9916f40666f7",
+        "job_details": {},
+        "personal_info": {
+            "name": "fda",
+            "email": "fdsafas",
+            "linkedin": "fdsa",
+            "github": "fdsa",
+            "phone": "fdsa",
+            "website": "fdsa"
+        },
+        "researches": [
+            {
+                "title": "fdsa",
+                "authors": "fdsafsa",
+                "conference": "fdsa",
+                "date": "08/2024"
+            }
+        ],
+        "educations": [
+            {
+                "institution": "fda",
+                "area": "fdsafsadf",
+                "degree": "dadsafdsaf",
+                "current": True,
+                "gpa": "fdsafdsa",
+                "courses": "fdafsaf",
+                "other": "fdsafas;fdsafdsafafdsa",
+                "start_date": "07/2024",
+                "end_date": ""
+            }
+        ],
+        "self_intro": {
+            "content": "fdafdsafds",
+            "title": "fdsa-fdas"
+        },
+        "skills": {
+            "categories": [
+                "New Category 1"
+            ],
+            "skill_mapping": {
+                "New Category 1": [
+                    "New Skill 1",
+                    "New Skill 2"
+                ]
+            }
+        },
+        "work": [
+            {
+                "id": 1,
+                "company": "fdsa",
+                "role": "df",
+                "location": "fdafsa",
+                "start_date": "01/2024",
+                "end_date": "08/2024",
+                "current": True,
+                "highlights": [
+                        "new highlight"
+                ]
+            }
+        ],
+        "projects": [
+            {
+                "id": 1,
+                "project_name": "llm-benchmark",
+                "start_date": "Invalid Date",
+                "end_date": "",
+                "url": "fdsafsa",
+                "current": True,
+                "highlights": [
+                    "new highlight"
+                ]
+            }
+        ],
+        "additional_info": {}
+    },
+    "job_details": {
+        "company": "Example Company",
+        "position": "Project Manager",
+        "description": "Manage and oversee project execution.",
+        "url": "https://test.com"
+    },
+    "project": {
+        "id": 1,
+        "projectName": "Project X",
+        "url": "some_url",
+        "startDate": "2023-01-01",
+        "endDate": "2023-12-31",
+        "current": False,
+        "highlights": ["Highlight 1", "Highlight 2"],
+    }
+}
 
 
 @pytest.fixture
@@ -165,23 +256,7 @@ def test_assist_project(
         (8, "Good job!"),
     ]
 
-    mock_request_data = {
-        "resume": {},
-        "job_details": {
-            "company": "Example Company",
-            "position": "Project Manager",
-            "description": "Manage and oversee project execution.",
-            "url": "https://test.com",
-        },
-        "project": {
-            "project_name": "Project X",
-            "url": "some_url",
-            "start_date": "2023-01-01",
-            "end_date": "2023-12-31",
-            "current": False,
-            "highlights": ["Highlight 1", "Highlight 2"],
-        },
-    }
+    mock_request_data = FULL_PAYLOAD
 
     response = client.post("/api/project/assist", json=mock_request_data)
 

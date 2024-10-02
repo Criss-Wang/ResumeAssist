@@ -55,13 +55,14 @@ export default function Projects({ onResumeChange, resume, job }) {
     const handleAssist = async (project) => {
       try {
           // Send a POST request to your backend
-          console.log(project);
+          const currHighlights = project.highlights.map(h => h.value);
+          console.log({ resume: resume, job_details: job, project: {...project, highlights: currHighlights} });
           const response = await fetch('/api/project/assist', {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json',
               },
-              body: JSON.stringify({ resume: resume, project: project }),
+              body: JSON.stringify({ resume: resume, job_details: job, project: {...project, highlights: currHighlights} }),
           });
           const results = await response.json();
           const updatedHighlights = results.map((r, idx) => { 

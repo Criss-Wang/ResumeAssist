@@ -1,10 +1,9 @@
-import json
-from typing import List, Dict, Any
+from typing import List
 
 from fastapi import APIRouter, HTTPException, Request, Response
 from uuid import UUID
 
-from resume_assist.service.rest.data_model.resume_model import Resume, Intro
+from resume_assist.service.rest.data_model.resume_model import Intro
 from resume_assist.io.db.engine import neo4j_client
 from resume_assist.agent_hub.summary_agent import SummaryAgent
 
@@ -38,12 +37,14 @@ async def assist_self_intro(request: Request):
     try:
         agent = SummaryAgent("self-intro")
         info_vars = await request.json()
-        print(info_vars)
-        info_vars = {
-            "title": info_vars["intro"]["title"],
-            "content": info_vars["intro"]["content"],
-        }
-        ai_assisted_intro = agent.step(info_vars)
+
+        intro_vars = {}
+        intro_vars.update(**info_vars["intro"])
+        intro_vars.update(**info_vars["resume"]["job_details"])
+        intro_vars["skills"] = info_vars["resume"]["skills"]
+        intro_vars["work_experiences"] = info_vars["resume"]["work"]
+        intro_vars["project_experiences"] = info_vars["resume"]["projects"]
+        ai_assisted_intro = agent.step(intro_vars)
         return ai_assisted_intro
     except Exception as e:
         print(e)

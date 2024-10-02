@@ -65,41 +65,91 @@ def test_assist_self_intro(client, mock_summary_agent):
     mock_summary_agent.return_value = mock_agent_instance
 
     test_data = {
-        "company": "some company",
-        "position": "some role",
-        "description": "some job description",
-        "skills": {"category 1": ["s1", "s2"], "category 2": ["s1", "s2"]},
-        "work_experiences": [
-            {
-                "work_company": "some work company",
-                "start_date": "a start_date",
-                "end_date": "a end_date",
-                "work_role": "some work role",
-                "highlights": ["highlight 1", "highlight 2", "highlight 3"],
+        "resume": {
+            "id": "b9641efd-6b3a-4090-9be4-9916f40666f7",
+            "job_details": {
+                "position": "fdas",
+                "company": "fdsa",
+                "url": "fdas",
+                "description": "fasfdsadf"
             },
-            {
-                "work_company": "some work company",
-                "start_date": "a start_date",
-                "end_date": "a end_date",
-                "work_role": "some work role",
-                "highlights": ["highlight 1", "highlight 2", "highlight 3"],
+            "personal_info": {
+                "name": "fda",
+                "email": "fdsafas",
+                "linkedin": "fdsa",
+                "github": "fdsa",
+                "phone": "fdsa",
+                "website": "fdsa"
             },
-        ],
-        "project_experiences": [
-            {
-                "project_name": "a project_name",
-                "start_date": "a start_date",
-                "end_date": "a end_date",
-                "highlights": ["highlights 1", "highlights 2", "highlights 3"],
+            "researches": [
+                {
+                    "title": "fdsa",
+                    "authors": "fdsafsa",
+                    "conference": "fdsa",
+                    "date": "08/2024"
+                }
+            ],
+            "educations": [
+                {
+                    "institution": "fda",
+                    "area": "fdsafsadf",
+                    "degree": "dadsafdsaf",
+                    "current": True,
+                    "gpa": "fdsafdsa",
+                    "courses": "fdafsaf",
+                    "other": "fdsafas;fdsafdsafafdsa",
+                    "start_date": "07/2024",
+                    "end_date": ""
+                }
+            ],
+            "self_intro": {
+                "content": "fdafdsafds",
+                "title": "fdsa-fdas"
             },
-            {
-                "project_name": "a project_name",
-                "start_date": "a start_date",
-                "end_date": "a end_date",
-                "highlights": ["highlights 1", "highlights 2", "highlights 3"],
+            "skills": {
+                "categories": [
+                    "New Category 1"
+                ],
+                "skill_mapping": {
+                    "New Category 1": [
+                        "New Skill 1",
+                        "New Skill 2"
+                    ]
+                }
             },
-        ],
-        "word_limit": 100,
+            "work": [
+                {
+                    "id": 1,
+                    "company": "fdsa",
+                    "role": "df",
+                    "location": "fdafsa",
+                    "start_date": "01/2024",
+                    "end_date": "08/2024",
+                    "current": False,
+                    "highlights": [
+                        "new highlight"
+                    ]
+                }
+            ],
+            "projects": [
+                {
+                    "id": 1,
+                    "project_name": "llm-benchmark",
+                    "start_date": "Invalid Date",
+                    "end_date": "",
+                    "url": "fdsafsa",
+                    "current": True,
+                    "highlights": [
+                        "new highlight"
+                    ]
+                }
+            ],
+            "additional_info": {}
+        },
+        "intro": {
+            "content": "fdafdsafds",
+            "title": "fdsa-fdas"
+        }
     }
 
     response = client.post("/api/self-intro/assist", json=test_data)

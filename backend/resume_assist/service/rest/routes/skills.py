@@ -60,13 +60,24 @@ def get_skills(id: UUID):
 @skills_router.post("/assist", response_model=List)
 async def assist_skills(request: Request):
     try:
-        # agent = EnhancerAgent("skills")
+        agent = EnhancerAgent("skills")
         info_vars = await request.json()
-        print(info_vars)
-        return [{"category": "Programming Languages", "skills": ["Python", "Java", "C++"]}]
-        # ai_assisted_skills = agent.step(info_vars)
-        # return ai_assisted_skills
+
+        skills_vars = {}
+        skills_vars.update(**info_vars["job"])
+        skills_vars["skills"] = parse_skills_payload(info_vars["categories"])
+        skills_vars["work_experiences"] = info_vars["resume"]["work"]
+        skills_vars["project_experiences"] = info_vars["resume"]["projects"]
+        ai_assisted_skills = agent.step(skills_vars)
+        return ai_assisted_skills
     except Exception as e:
-        # logger.exception(e)
         print(e)
         raise HTTPException(500, "Unexpected error")
+
+
+def parse_skills_payload(skills):
+    skills_str = ""
+    for skill in skills:
+        category = skill["name"]
+        skills_str += f"{category}: {', '.join([s['name'] for s in skill['skills']])}\n"
+    return skills_str[:-1]

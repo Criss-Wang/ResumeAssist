@@ -52,8 +52,7 @@ export default function Experiences({ onResumeChange, resume, job }) {
     };
 
 
-    const handleAssist = async () => {
-      console.log(resume, job, experiences);
+    const handleAssist = async (curr_work) => {
       try {
           // Send a POST request to your backend
           const response = await fetch('/work/assist', {
@@ -61,7 +60,7 @@ export default function Experiences({ onResumeChange, resume, job }) {
               headers: {
                   'Content-Type': 'application/json',
               },
-              body: JSON.stringify({ resume: resume }),
+              body: JSON.stringify({ resume: resume, job_details: job, work: {...curr_work, highlights: curr_work.highlights.map(h => h.value)} }),
           });
   
           if (!response.ok) {
@@ -400,7 +399,7 @@ export default function Experiences({ onResumeChange, resume, job }) {
                         },
                         ml: 2, // Add margin-left to create space between buttons
                       }}
-                      onClick={handleAssist}
+                      onClick={() => handleAssist(exp)}
                     >
                       Assist
                     </Button>
