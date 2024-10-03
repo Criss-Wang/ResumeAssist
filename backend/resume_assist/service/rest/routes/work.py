@@ -1,4 +1,3 @@
-
 from typing import List
 
 from fastapi import APIRouter, HTTPException, Request, Response
@@ -19,17 +18,15 @@ from resume_assist.utilities.formatting_utils import (
 )
 
 
-work_experience_router = APIRouter(
-    prefix="/api/work", tags=["Resume: Work Experience"]
-)
+work_experience_router = APIRouter(prefix="/api/work", tags=["Resume: Work Experience"])
 
 
-@work_experience_router.post("/save/{id}")
-def save_work_experience(id: UUID, request: List[Work]):
+@work_experience_router.post("/save")
+def save_work_experience(request: List[Work]):
     try:
         for experience in request:
             query = """
-            MERGE (w:Work {id: $id})
+            MERGE (w:Work {id: $work_id})
             SET
                 w.company = $company,
                 w.location = $location,
@@ -40,7 +37,7 @@ def save_work_experience(id: UUID, request: List[Work]):
                 w.highlights = $highlights
             RETURN w
             """
-            parameters = {"id": str(id), **experience.model_dump()}
+            parameters = {"work_id": str(experience.work_id), **experience.model_dump()}
             result = neo4j_client.query(query, parameters)
             if not result:
                 raise HTTPException(500, "Failed to save work experience")
@@ -51,14 +48,14 @@ def save_work_experience(id: UUID, request: List[Work]):
         raise HTTPException(500, "Unexpected error")
 
 
-@work_experience_router.get("/{id}", response_model=List[Work])
-def get_work_experience(id: UUID):
+@work_experience_router.get("/all", response_model=List[Work])
+def get_work_experience():
     try:
         query = """
-        MATCH (w:Work {id: $id})
+        MATCH (w:Work)
         RETURN w
         """
-        parameters = {"id": str(id)}
+        parameters = {}
         result = neo4j_client.query(query, parameters)
         if not result:
             raise HTTPException(404, "Work experience not found")

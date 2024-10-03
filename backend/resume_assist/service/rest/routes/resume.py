@@ -16,7 +16,9 @@ resume_router = APIRouter(prefix="/api/resume", tags=["Resume: Complete"])
 @resume_router.post("/save/{id}")
 async def save_resume(id: UUID, request: Request):
     info_vars = await request.json()
-    # save all elements in the resume
+    # assumes all data has been save to resume
+    # TODO: enable on-prem (without initial saving) resume rendering
+
     # render the pdf
     render_agent = RenderAgent("render", use_prompt=False)
     render_agent.step(info_vars)
@@ -75,8 +77,8 @@ async def save_resume(id: UUID, request: Request):
         indexer_embedding = get_indexer_embedding([job_summary])[0]
         parameters = {
             "id": str(id),
-            "project_ids": request.project_ids,
-            "work_ids": request.work_ids,
+            "project_ids": project_ids,
+            "work_ids": work_ids,
             "embedding": indexer_embedding,
             "label": request.label,
         }
@@ -91,11 +93,11 @@ async def save_resume(id: UUID, request: Request):
         raise HTTPException(500, "Unexpected error")
 
 
-@resume_router.get("/{id}", response_model=Resume)
-def get_resume(id: UUID):
+@resume_router.get("/{resume_id}", response_model=Resume)
+def get_resume(resume_id: UUID):
     try:
         query = """
-        MATCH (r:Resume {id: $id})
+        MATCH (r:Resume {id: $resume_id})
         OPTIONAL MATCH (r)-[:FOR_JOB]->(job_details:Job)
         OPTIONAL MATCH (r)-[:HAS_PERSONAL_INFO]->(personal_info:PersonalInfo)
         OPTIONAL MATCH (r)-[:HAS_SELF_INTRO]->(intro:SelfIntro)
@@ -106,7 +108,7 @@ def get_resume(id: UUID):
             COLLECT(DISTINCT pr) as projects,
             COLLECT(DISTINCT w) as works
         """
-        parameters = {"id": str(id)}
+        parameters = {"id": str(resume_id)}
         result = neo4j_client.query(query, parameters)
         if not result:
             raise HTTPException(404, "Full Resume not found")

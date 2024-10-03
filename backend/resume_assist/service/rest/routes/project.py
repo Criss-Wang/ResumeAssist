@@ -21,12 +21,12 @@ from resume_assist.utilities.formatting_utils import (
 project_router = APIRouter(prefix="/api/project", tags=["Resume: Project Experience"])
 
 
-@project_router.post("/save/{id}")
-def save_project(id: UUID, request: List[Project]):
+@project_router.post("/save")
+def save_project(request: List[Project]):
     try:
         for project in request:
             query = """
-            MERGE (pr:Project {id: $id})
+            MERGE (pr:Project {id: $project_id})
             SET
                 pr.project_name = $project_name,
                 pr.start_date = $start_date,
@@ -36,7 +36,7 @@ def save_project(id: UUID, request: List[Project]):
                 pr.highlights = $highlights
             RETURN pr
             """
-            parameters = {"id": str(id), **project.model_dump()}
+            parameters = {"project_id": str(project.project_id), **project.model_dump()}
             result = neo4j_client.query(query, parameters)
             if not result:
                 raise HTTPException(500, "Failed to save personal information")
@@ -47,14 +47,14 @@ def save_project(id: UUID, request: List[Project]):
         raise HTTPException(500, "Unexpected error")
 
 
-@project_router.get("/{id}", response_model=List[Project])
-def get_project(id: UUID):
+@project_router.get("/all", response_model=List[Project])
+def get_project():
     try:
         query = """
-        MATCH (pr:Project {id: $id})
+        MATCH (pr:Project)
         RETURN pr
         """
-        parameters = {"id": str(id)}
+        parameters = {}
         result = neo4j_client.query(query, parameters)
         if not result:
             raise HTTPException(404, "Personal Information not found")

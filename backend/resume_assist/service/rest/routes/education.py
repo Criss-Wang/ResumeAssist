@@ -11,11 +11,11 @@ education_router = APIRouter(prefix="/api/education", tags=["Resume: Education"]
 
 
 @education_router.post("/save")
-def save_education(id: UUID, request: List[Education]):
+def save_education(request: List[Education]):
     try:
         for education in request:
             query = """
-            MERGE (edu:Education {id: $id})
+            MERGE (edu:Education {id: $education_id})
             SET
                 edu.institution = $institution,
                 edu.area = $area,
@@ -28,7 +28,10 @@ def save_education(id: UUID, request: List[Education]):
                 edu.other = $other
             RETURN edu
             """
-            parameters = {"id": str(education.id), **education.model_dump()}
+            parameters = {
+                "education_id": str(education.education_id),
+                **education.model_dump(),
+            }
             result = neo4j_client.query(query, parameters)
 
             if not result:
@@ -40,14 +43,14 @@ def save_education(id: UUID, request: List[Education]):
         raise HTTPException(500, "Unexpected error")
 
 
-@education_router.get("/{id}", response_model=List[Education])
-def get_education(id: UUID):
+@education_router.get("/all", response_model=List[Education])
+def get_education():
     try:
         query = """
-        MATCH (edu:Education {id: $id})
+        MATCH (edu:Education)
         RETURN edu
         """
-        parameters = {"id": str(id)}
+        parameters = {}
         result = neo4j_client.query(query, parameters)
 
         if not result:
