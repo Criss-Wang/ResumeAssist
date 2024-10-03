@@ -22,14 +22,14 @@ FULL_PAYLOAD = {
             "linkedin": "fdsa",
             "github": "fdsa",
             "phone": "fdsa",
-            "website": "fdsa"
+            "website": "fdsa",
         },
         "researches": [
             {
                 "title": "fdsa",
                 "authors": "fdsafsa",
                 "conference": "fdsa",
-                "date": "08/2024"
+                "date": "08/2024",
             }
         ],
         "educations": [
@@ -42,23 +42,13 @@ FULL_PAYLOAD = {
                 "courses": "fdafsaf",
                 "other": "fdsafas;fdsafdsafafdsa",
                 "start_date": "07/2024",
-                "end_date": ""
+                "end_date": "",
             }
         ],
-        "self_intro": {
-            "content": "fdafdsafds",
-            "title": "fdsa-fdas"
-        },
+        "self_intro": {"content": "fdafdsafds", "title": "fdsa-fdas"},
         "skills": {
-            "categories": [
-                "New Category 1"
-            ],
-            "skill_mapping": {
-                "New Category 1": [
-                    "New Skill 1",
-                    "New Skill 2"
-                ]
-            }
+            "categories": ["New Category 1"],
+            "skill_mapping": {"New Category 1": ["New Skill 1", "New Skill 2"]},
         },
         "work": [
             {
@@ -69,9 +59,7 @@ FULL_PAYLOAD = {
                 "start_date": "01/2024",
                 "end_date": "08/2024",
                 "current": True,
-                "highlights": [
-                        "new highlight"
-                ]
+                "highlights": ["new highlight"],
             }
         ],
         "projects": [
@@ -82,18 +70,16 @@ FULL_PAYLOAD = {
                 "end_date": "",
                 "url": "fdsafsa",
                 "current": True,
-                "highlights": [
-                    "new highlight"
-                ]
+                "highlights": ["new highlight"],
             }
         ],
-        "additional_info": {}
+        "additional_info": {},
     },
     "job_details": {
         "company": "Example Company",
         "position": "Project Manager",
         "description": "Manage and oversee project execution.",
-        "url": "https://test.com"
+        "url": "https://test.com",
     },
     "work": {
         "id": 1,
@@ -103,8 +89,8 @@ FULL_PAYLOAD = {
         "endDate": "2024-08-01T07:00:00.000Z",
         "current": False,
         "location": "fdafsa",
-        "highlights": ["Highlight 1", "Highlight 2"]
-    }
+        "highlights": ["Highlight 1", "Highlight 2"],
+    },
 }
 
 
@@ -128,9 +114,7 @@ def mock_keyword_extraction_agent():
 
 @pytest.fixture
 def mock_retrieval_agent():
-    with patch(
-        "resume_assist.service.rest.routes.work.RetrievalAgent"
-    ) as mock_agent:
+    with patch("resume_assist.service.rest.routes.work.RetrievalAgent") as mock_agent:
         mock_instance = MagicMock(spec=RetrievalAgent)
         mock_agent.return_value = mock_instance
         yield mock_instance
@@ -168,9 +152,13 @@ def client():
 
 
 def test_save_work_experience(mock_neo4j_client, client):
-    mock_neo4j_client.query.return_value = [{"w": {"id": str(uuid4())}}]
+    resume_id = uuid4()
+    work_id = uuid4()
+    mock_neo4j_client.query.return_value = [{"w": {"id": str(work_id)}}]
     work_data = [
         {
+            "id": str(resume_id),
+            "work_id": str(work_id),
             "company": "Test Company",
             "location": "Test Location",
             "role": "Test Role",
@@ -181,19 +169,18 @@ def test_save_work_experience(mock_neo4j_client, client):
         }
     ]
 
-    response = client.post(
-        "/api/work/save/{id}".format(id=uuid4()), json=work_data
-    )
+    response = client.post("/api/work/save", json=work_data)
 
     assert response.status_code == 200
     assert mock_neo4j_client.query.call_count == 1
 
 
 def test_get_work_experience(mock_neo4j_client, client):
+    work_id = uuid4()
     mock_neo4j_client.query.return_value = [
         {
             "w": {
-                "id": str(uuid4()),
+                "work_id": str(work_id),
                 "company": "Test Company",
                 "location": "location",
                 "role": "role",
@@ -205,7 +192,7 @@ def test_get_work_experience(mock_neo4j_client, client):
         }
     ]
 
-    response = client.get("/api/work/{id}".format(id=uuid4()))
+    response = client.get("/api/work/all".format(id=uuid4()))
 
     assert response.status_code == 200
     assert response.json()[0]["company"] == "Test Company"
@@ -266,13 +253,13 @@ def test_assist_project(
 
     mock_enhancer_agent.step.assert_any_call(
         {
-            'keywords': ['keyword1', 'keyword2'],
-            'reference_chunks': '<Examples>\nHere are a list of examples of highlights that may be relevant to this job, use them as references points if necessary.\n\n----------\nExample 1: \n- Highlight 1\n- Highlight 2\n----------\nExample 2: \n- Highlight 3\n- Highlight 4\n\n</Examples>',
-            'previous_attempt': 'Here is a previous attempt to improve this highlight that failed. Learn from the remark and try to create a bettern one if possible:\n<PreviousAttempt>\n- Enhanced Highlight 1\n- Enhanced Highlight 2\n</PreviousAttempt>\n\n<Remark>\nBad job!\n</Remark>',
-            'highlights': ['Highlight 1', 'Highlight 2'],
-            'work_company': 'fdsa',
-            'work_role': 'df',
-            'last_enhanced_version': ['Enhanced Highlight 1', 'Enhanced Highlight 2']
+            "keywords": ["keyword1", "keyword2"],
+            "reference_chunks": "<Examples>\nHere are a list of examples of highlights that may be relevant to this job, use them as references points if necessary.\n\n----------\nExample 1: \n- Highlight 1\n- Highlight 2\n----------\nExample 2: \n- Highlight 3\n- Highlight 4\n\n</Examples>",
+            "previous_attempt": "Here is a previous attempt to improve this highlight that failed. Learn from the remark and try to create a bettern one if possible:\n<PreviousAttempt>\n- Enhanced Highlight 1\n- Enhanced Highlight 2\n</PreviousAttempt>\n\n<Remark>\nBad job!\n</Remark>",
+            "highlights": ["Highlight 1", "Highlight 2"],
+            "work_company": "fdsa",
+            "work_role": "df",
+            "last_enhanced_version": ["Enhanced Highlight 1", "Enhanced Highlight 2"],
         }
     )
     mock_reviewer_agent.review.assert_any_call(

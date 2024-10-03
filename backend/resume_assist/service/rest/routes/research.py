@@ -10,12 +10,12 @@ from resume_assist.io.db.engine import neo4j_client
 research_router = APIRouter(prefix="/api/research", tags=["Resume: Research"])
 
 
-@research_router.post("/save/{id}")
-def save_research(id: UUID, request: List[Research]):
+@research_router.post("/save")
+def save_research(request: List[Research]):
     try:
         for research in request:
             query = """
-            MERGE (resea:Research {id: $id})
+            MERGE (resea:Research {id: $research_id})
             SET
                 resea.title = $title,
                 resea.authors = $authors,
@@ -23,7 +23,10 @@ def save_research(id: UUID, request: List[Research]):
                 resea.date = $date
             RETURN resea
             """
-            parameters = {"id": str(id), **research.model_dump()}
+            parameters = {
+                "research_id": str(research.research_id),
+                **research.model_dump(),
+            }
             result = neo4j_client.query(query, parameters)
 
             if not result:
@@ -35,14 +38,14 @@ def save_research(id: UUID, request: List[Research]):
         raise HTTPException(500, "Unexpected error")
 
 
-@research_router.get("/{id}", response_model=List[Research])
-def get_research(id: UUID):
+@research_router.get("/all", response_model=List[Research])
+def get_research():
     try:
         query = """
-        MATCH (resea:Research {id: $id})
+        MATCH (resea:Research)
         RETURN resea
         """
-        parameters = {"id": str(id)}
+        parameters = {}
         result = neo4j_client.query(query, parameters)
 
         if not result:

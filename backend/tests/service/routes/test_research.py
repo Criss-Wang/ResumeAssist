@@ -23,11 +23,13 @@ def mock_neo4j_client():
 
 
 def test_save_research(client, mock_neo4j_client):
-    test_id = uuid.uuid4()
+    resume_id = uuid.uuid4()
+    research_id = uuid.uuid4()
     mock_neo4j_client.query.return_value = [
         {
             "resea": {
-                "id": str(test_id),
+                "id": str(resume_id),
+                "research_id": str(research_id),
                 "title": "Test title",
                 "authors": "Test authors",
                 "conference": "Test conference",
@@ -37,13 +39,14 @@ def test_save_research(client, mock_neo4j_client):
     ]
     test_data = [
         {
+            "research_id": str(research_id),
             "title": "Test title",
             "authors": "Test authors",
             "conference": "Test conference",
             "date": "Test date",
         }
     ]
-    response = client.post(f"/api/research/save/{test_id}", json=test_data)
+    response = client.post(f"/api/research/save", json=test_data)
 
     assert response.status_code == 200
     assert mock_neo4j_client.query.called
@@ -51,8 +54,9 @@ def test_save_research(client, mock_neo4j_client):
 
 # Test case for GET /job-details/{id} endpoint
 def test_get_research(client, mock_neo4j_client):
-    test_id = uuid.uuid4()
+    research_id = uuid.uuid4()
     test_data = {
+        "research_id": str(research_id),
         "title": "Test title",
         "authors": "Test authors",
         "conference": "Test conference",
@@ -60,7 +64,7 @@ def test_get_research(client, mock_neo4j_client):
     }
     mock_neo4j_client.query.return_value = [{"resea": test_data}]
 
-    response = client.get(f"/api/research/{test_id}")
+    response = client.get(f"/api/research/all")
 
     assert response.status_code == 200
     assert response.json() == [test_data]

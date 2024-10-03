@@ -25,14 +25,14 @@ FULL_PAYLOAD = {
             "linkedin": "fdsa",
             "github": "fdsa",
             "phone": "fdsa",
-            "website": "fdsa"
+            "website": "fdsa",
         },
         "researches": [
             {
                 "title": "fdsa",
                 "authors": "fdsafsa",
                 "conference": "fdsa",
-                "date": "08/2024"
+                "date": "08/2024",
             }
         ],
         "educations": [
@@ -45,23 +45,13 @@ FULL_PAYLOAD = {
                 "courses": "fdafsaf",
                 "other": "fdsafas;fdsafdsafafdsa",
                 "start_date": "07/2024",
-                "end_date": ""
+                "end_date": "",
             }
         ],
-        "self_intro": {
-            "content": "fdafdsafds",
-            "title": "fdsa-fdas"
-        },
+        "self_intro": {"content": "fdafdsafds", "title": "fdsa-fdas"},
         "skills": {
-            "categories": [
-                "New Category 1"
-            ],
-            "skill_mapping": {
-                "New Category 1": [
-                    "New Skill 1",
-                    "New Skill 2"
-                ]
-            }
+            "categories": ["New Category 1"],
+            "skill_mapping": {"New Category 1": ["New Skill 1", "New Skill 2"]},
         },
         "work": [
             {
@@ -72,9 +62,7 @@ FULL_PAYLOAD = {
                 "start_date": "01/2024",
                 "end_date": "08/2024",
                 "current": True,
-                "highlights": [
-                        "new highlight"
-                ]
+                "highlights": ["new highlight"],
             }
         ],
         "projects": [
@@ -85,18 +73,16 @@ FULL_PAYLOAD = {
                 "end_date": "",
                 "url": "fdsafsa",
                 "current": True,
-                "highlights": [
-                    "new highlight"
-                ]
+                "highlights": ["new highlight"],
             }
         ],
-        "additional_info": {}
+        "additional_info": {},
     },
     "job_details": {
         "company": "Example Company",
         "position": "Project Manager",
         "description": "Manage and oversee project execution.",
-        "url": "https://test.com"
+        "url": "https://test.com",
     },
     "project": {
         "id": 1,
@@ -106,7 +92,7 @@ FULL_PAYLOAD = {
         "endDate": "2023-12-31",
         "current": False,
         "highlights": ["Highlight 1", "Highlight 2"],
-    }
+    },
 }
 
 
@@ -177,10 +163,13 @@ def a_client():
 
 
 def test_save_project(client, mock_neo4j_client):
+    resume_id = uuid.uuid4()
+    project_id = uuid.uuid4()
     mock_neo4j_client.query.return_value = [
         {
             "pr": {
-                "id": str(uuid.uuid4()),
+                "id": str(resume_id),
+                "project_id": str(project_id),
                 "project_name": "Project X",
                 "start_date": "2023-01-01",
                 "end_date": "2023-12-31",
@@ -190,9 +179,9 @@ def test_save_project(client, mock_neo4j_client):
             }
         }
     ]
-    test_id = uuid.uuid4()
     test_data = [
         {
+            "project_id": str(project_id),
             "project_name": "Project X",
             "url": "some_url",
             "start_date": "2023-01-01",
@@ -201,7 +190,7 @@ def test_save_project(client, mock_neo4j_client):
             "highlights": ["Achievement 1", "Achievement 2"],
         }
     ]
-    response = client.post(f"/api/project/save/{test_id}", json=test_data)
+    response = client.post(f"/api/project/save", json=test_data)
 
     assert response.status_code == 200
     assert mock_neo4j_client.query.called
@@ -209,8 +198,9 @@ def test_save_project(client, mock_neo4j_client):
 
 # Test case for GET /project/{id} endpoint
 def test_get_project(client, mock_neo4j_client):
-    test_id = uuid.uuid4()
+    project_id = uuid.uuid4()
     test_data = {
+        "project_id": str(project_id),
         "project_name": "Project X",
         "url": "some_url",
         "start_date": "2023-01-01",
@@ -221,7 +211,7 @@ def test_get_project(client, mock_neo4j_client):
 
     mock_neo4j_client.query.return_value = [{"pr": test_data}]
 
-    response = client.get(f"/api/project/{test_id}")
+    response = client.get(f"/api/project/all")
 
     assert response.status_code == 200
     assert response.json() == [test_data]

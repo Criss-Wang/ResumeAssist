@@ -24,10 +24,13 @@ def mock_neo4j_client():
 
 # Test case for POST /job-details/{id} endpoint
 def test_save_educations(client, mock_neo4j_client):
+    resume_id = uuid.uuid4()
+    education_id = uuid.uuid4()
     mock_neo4j_client.query.return_value = [
         {
             "edu": {
-                "id": str(uuid.uuid4()),
+                "id": str(resume_id),
+                "education_id": str(education_id),
                 "institution": "Test institution",
                 "area": "Test area",
                 "degree": "Test degree",
@@ -40,9 +43,9 @@ def test_save_educations(client, mock_neo4j_client):
             }
         }
     ]
-    test_id = uuid.uuid4()
     test_data = [
         {
+            "education_id": str(education_id),
             "institution": "Test institution",
             "area": "Test area",
             "degree": "Test degree",
@@ -54,7 +57,7 @@ def test_save_educations(client, mock_neo4j_client):
             "other": "other",
         }
     ]
-    response = client.post(f"/api/education/save/{test_id}", json=test_data)
+    response = client.post(f"/api/education/save", json=test_data)
 
     assert response.status_code == 200
     assert mock_neo4j_client.query.called
@@ -62,8 +65,9 @@ def test_save_educations(client, mock_neo4j_client):
 
 # Test case for GET /job-details/{id} endpoint
 def test_get_education(client, mock_neo4j_client):
-    test_id = uuid.uuid4()
+    education_id = uuid.uuid4()
     test_data = {
+        "education_id": str(education_id),
         "institution": "Test institution",
         "area": "Test area",
         "degree": "Test degree",
@@ -76,7 +80,7 @@ def test_get_education(client, mock_neo4j_client):
     }
     mock_neo4j_client.query.return_value = [{"edu": test_data}]
 
-    response = client.get(f"/api/education/{test_id}")
+    response = client.get(f"/api/education/all")
 
     assert response.status_code == 200
     assert response.json() == [test_data]
