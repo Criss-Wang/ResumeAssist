@@ -14,23 +14,18 @@ FULL_PAYLOAD = {
         "position": "fdas",
         "company": "fdsa",
         "url": "fdas",
-        "description": "fasfdsadf"
+        "description": "fasfdsadf",
     },
     "personal_info": {
         "name": "fda",
-        "email": "fdsafas",
-        "linkedin": "fdsa",
-        "github": "fdsa",
-        "phone": "fdsa",
-        "website": "fdsa"
+        "email": "test@test.com",
+        "linkedin": "https://www.linkedin.com/in/zhenlin-wang/",
+        "github": "https://github.com/Criss-Wang",
+        "phone": "123412432142",
+        "website": "www.google.com",
     },
     "researches": [
-        {
-            "title": "fdsa",
-            "authors": "fdsafsa",
-            "conference": "fdsa",
-            "date": "08/2024"
-        }
+        {"title": "fdsa", "authors": "fdsafsa", "conference": "fdsa", "date": "08/2024"}
     ],
     "educations": [
         {
@@ -42,23 +37,13 @@ FULL_PAYLOAD = {
             "courses": "fdafsaf",
             "other": "fdsafas;fdsafdsafafdsa",
             "start_date": "07/2024",
-            "end_date": ""
+            "end_date": "",
         }
     ],
-    "self_intro": {
-        "content": "fdafdsafds",
-        "title": "fdsa-fdas"
-    },
+    "self_intro": {"content": "fdafdsafds", "title": "fdsa-fdas"},
     "skills": {
-        "categories": [
-            "New Category 1"
-        ],
-        "skill_mapping": {
-            "New Category 1": [
-                "New Skill 1",
-                "New Skill 2"
-            ]
-        }
+        "categories": ["New Category 1"],
+        "skill_mapping": {"New Category 1": ["New Skill 1", "New Skill 2"]},
     },
     "work": [
         {
@@ -69,9 +54,7 @@ FULL_PAYLOAD = {
             "start_date": "01/2024",
             "end_date": "08/2024",
             "current": False,
-            "highlights": [
-                "new highlight"
-            ]
+            "highlights": ["new highlight"],
         }
     ],
     "projects": [
@@ -82,12 +65,10 @@ FULL_PAYLOAD = {
             "end_date": "",
             "url": "fdsafsa",
             "current": True,
-            "highlights": [
-                "new highlight"
-            ]
+            "highlights": ["new highlight"],
         }
     ],
-    "additional_info": {}
+    "additional_info": {},
 }
 
 

@@ -98,3 +98,11 @@ def build_previous_attempt_str(attempt_body: List[str], remark: str) -> str:
     s += f"<Remark>\n{remark}\n</Remark>"
 
     return s
+
+
+def convert_dateformat(date_str):
+    # Split the input string into month and year
+    month, year = date_str.split("/")
+
+    # Return the formatted string in yyyy-mm format
+    return f"{year}-{month.zfill(2)}"

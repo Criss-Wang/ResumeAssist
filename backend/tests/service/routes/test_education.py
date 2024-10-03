@@ -23,7 +23,7 @@ def mock_neo4j_client():
 
 
 # Test case for POST /job-details/{id} endpoint
-def test_save_job_details(client, mock_neo4j_client):
+def test_save_educations(client, mock_neo4j_client):
     mock_neo4j_client.query.return_value = [
         {
             "edu": {
@@ -61,7 +61,7 @@ def test_save_job_details(client, mock_neo4j_client):
 
 
 # Test case for GET /job-details/{id} endpoint
-def test_get_job_details(client, mock_neo4j_client):
+def test_get_education(client, mock_neo4j_client):
     test_id = uuid.uuid4()
     test_data = {
         "institution": "Test institution",

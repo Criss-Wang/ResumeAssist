@@ -10,9 +10,8 @@ from resume_assist.io.db.engine import neo4j_client
 education_router = APIRouter(prefix="/api/education", tags=["Resume: Education"])
 
 
-@education_router.post("/save/{id}")
+@education_router.post("/save")
 def save_education(id: UUID, request: List[Education]):
-    
     try:
         for education in request:
             query = """
@@ -29,7 +28,7 @@ def save_education(id: UUID, request: List[Education]):
                 edu.other = $other
             RETURN edu
             """
-            parameters = {"id": str(id), **education.model_dump()}
+            parameters = {"id": str(education.id), **education.model_dump()}
             result = neo4j_client.query(query, parameters)
 
             if not result:
