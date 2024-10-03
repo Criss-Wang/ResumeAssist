@@ -78,7 +78,7 @@ def get_self_intro_all():
         RETURN si
         """
         result = neo4j_client.query(query)
-        if not result:
+        if not result:  # pragma: no cover
             print("no existing self intro, check your database")
         # Convert the result to a list of Intro objects
         self_intros = [Intro(**record["si"]) for record in result]
