@@ -38,7 +38,7 @@ async def assist_self_intro(request: Request):
         agent = SummaryAgent("self-intro")
         info_vars = await request.json()
 
-        intro_vars = {}
+        intro_vars: dict = {}
         intro_vars.update(**info_vars["intro"])
         intro_vars.update(**info_vars["resume"]["job_details"])
         intro_vars["skills"] = info_vars["resume"]["skills"]

@@ -133,7 +133,7 @@ def build_skills(skills):
 
 
 class RenderAgent(Agent):
-    def step(self, input_vars: Dict) -> List[str]:
+    def step(self, input_vars: Dict) -> bool:
         cv_info = {}
         try:
             cv_info["personal"] = build_personal(input_vars["personal_info"])

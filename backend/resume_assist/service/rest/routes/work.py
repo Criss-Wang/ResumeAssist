@@ -97,7 +97,9 @@ async def assist_work_experience(request: Request):
         )
 
         enhancement_info = {}
-        enhancement_info["keywords"] = keyword_agent.extract_keywords(job_description)
+        enhancement_info["keywords"] = "; ".join(
+            keyword_agent.extract_keywords(job_description)
+        )
         enhancement_info["reference_chunks"] = build_reference_chunks_str(
             retrieval_agent.retrieve(
                 indexer_txt=job_summary, node_type="Work", refined_filter=False
@@ -118,7 +120,7 @@ async def assist_work_experience(request: Request):
             grade, remark = reviewer_agent.review(
                 original_highlights, ai_assisted_highlights, job_description
             )
-            enhancement_info["last_enhanced_version"] = ai_assisted_highlights
+            enhancement_info["last_enhanced_version"] = str(ai_assisted_highlights)
             enhancement_info["previous_attempt"] = build_previous_attempt_str(
                 ai_assisted_highlights, remark
             )
