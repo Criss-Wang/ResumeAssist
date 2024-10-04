@@ -89,10 +89,10 @@ async def save_resume(id: UUID, request: Request):
             "embedding": job_embedding,
             "label": info_vars["label"] if "label" in info_vars else Label.PENDING,
         }
-        result = neo4j_client.query(query, parameters)
+        neo4j_client.query(query, parameters)
 
-        if not result:
-            raise HTTPException(500, "Failed to save resume with relationships built")
+        # if not result:
+        #     raise HTTPException(500, "Failed to save resume with relationships built")
         return Response(status_code=200)
     except Exception as e:
         # logger.exception(e)
