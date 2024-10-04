@@ -21,4 +21,4 @@ Steps:
 - Enable modification-based graph relationship (section modified from xxx)
 
 TODO:
-- Fix $id matching bug --> should be by $resumeId + $itemId
+- Fix id-bugs --> Self-Introduction (resume.id should be matching with current job)

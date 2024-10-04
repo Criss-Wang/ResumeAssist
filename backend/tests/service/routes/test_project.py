@@ -13,10 +13,87 @@ from resume_assist.agent_hub.enhancer_agent import EnhancerAgent
 from resume_assist.agent_hub.reviewer_agent import ReviewerAgent
 from resume_assist.utilities.formatting_utils import (
     build_full_job_description,
-    build_reference_chunks_str,
-    build_previous_attempt_str,
-    build_highlight_str,
 )
+
+FULL_PAYLOAD = {
+    "resume": {
+        "id": "b9641efd-6b3a-4090-9be4-9916f40666f7",
+        "job_details": {},
+        "personal_info": {
+            "name": "fda",
+            "email": "fdsafas",
+            "linkedin": "fdsa",
+            "github": "fdsa",
+            "phone": "fdsa",
+            "website": "fdsa",
+        },
+        "researches": [
+            {
+                "title": "fdsa",
+                "authors": "fdsafsa",
+                "conference": "fdsa",
+                "date": "08/2024",
+            }
+        ],
+        "educations": [
+            {
+                "institution": "fda",
+                "area": "fdsafsadf",
+                "degree": "dadsafdsaf",
+                "current": True,
+                "gpa": "fdsafdsa",
+                "courses": "fdafsaf",
+                "other": "fdsafas;fdsafdsafafdsa",
+                "start_date": "07/2024",
+                "end_date": "",
+            }
+        ],
+        "self_intro": {"content": "fdafdsafds", "title": "fdsa-fdas"},
+        "skills": {
+            "categories": ["New Category 1"],
+            "skill_mapping": {"New Category 1": ["New Skill 1", "New Skill 2"]},
+        },
+        "work": [
+            {
+                "id": 1,
+                "company": "fdsa",
+                "role": "df",
+                "location": "fdafsa",
+                "start_date": "01/2024",
+                "end_date": "08/2024",
+                "current": True,
+                "highlights": ["new highlight"],
+            }
+        ],
+        "projects": [
+            {
+                "id": 1,
+                "project_name": "llm-benchmark",
+                "start_date": "Invalid Date",
+                "end_date": "",
+                "url": "fdsafsa",
+                "current": True,
+                "highlights": ["new highlight"],
+            }
+        ],
+        "additional_info": {},
+    },
+    "job_details": {
+        "company": "Example Company",
+        "position": "Project Manager",
+        "description": "Manage and oversee project execution.",
+        "url": "https://test.com",
+    },
+    "project": {
+        "id": 1,
+        "projectName": "Project X",
+        "url": "some_url",
+        "startDate": "2023-01-01",
+        "endDate": "2023-12-31",
+        "current": False,
+        "highlights": ["Highlight 1", "Highlight 2"],
+    },
+}
 
 
 @pytest.fixture
@@ -72,7 +149,7 @@ def mock_neo4j_client():
 @pytest.fixture
 def client():
 
-    app = FastAPI()
+    app = FastAPI(debug=True)
     app.include_router(project_router)
     return TestClient(app)
 
@@ -86,25 +163,34 @@ def a_client():
 
 
 def test_save_project(client, mock_neo4j_client):
+    resume_id = uuid.uuid4()
+    project_id = uuid.uuid4()
     mock_neo4j_client.query.return_value = [
         {
             "pr": {
-                "id": str(uuid.uuid4()),
+                "id": str(resume_id),
+                "project_id": str(project_id),
                 "project_name": "Project X",
                 "start_date": "2023-01-01",
                 "end_date": "2023-12-31",
+                "url": "some_url",
+                "current": False,
                 "highlights": ["Achievement 1", "Achievement 2"],
             }
         }
     ]
-    test_id = uuid.uuid4()
-    test_data = {
-        "project_name": "Project X",
-        "start_date": "2023-01-01",
-        "end_date": "2023-12-31",
-        "highlights": ["Achievement 1", "Achievement 2"],
-    }
-    response = client.post(f"/project/{test_id}/save", json=test_data)
+    test_data = [
+        {
+            "project_id": str(project_id),
+            "project_name": "Project X",
+            "url": "some_url",
+            "start_date": "2023-01-01",
+            "end_date": "2023-12-31",
+            "current": False,
+            "highlights": ["Achievement 1", "Achievement 2"],
+        }
+    ]
+    response = client.post("/api/project/save", json=test_data)
 
     assert response.status_code == 200
     assert mock_neo4j_client.query.called
@@ -112,19 +198,23 @@ def test_save_project(client, mock_neo4j_client):
 
 # Test case for GET /project/{id} endpoint
 def test_get_project(client, mock_neo4j_client):
-    test_id = uuid.uuid4()
+    project_id = uuid.uuid4()
     test_data = {
+        "project_id": str(project_id),
         "project_name": "Project X",
+        "url": "some_url",
         "start_date": "2023-01-01",
         "end_date": "2023-12-31",
+        "current": False,
         "highlights": ["Achievement 1", "Achievement 2"],
     }
+
     mock_neo4j_client.query.return_value = [{"pr": test_data}]
 
-    response = client.get(f"/project/{test_id}")
+    response = client.get("/api/project/all")
 
     assert response.status_code == 200
-    assert response.json() == test_data
+    assert response.json() == [test_data]
 
 
 # Test case for POST /project/assist endpoint
@@ -156,14 +246,9 @@ def test_assist_project(
         (8, "Good job!"),
     ]
 
-    mock_request_data = {
-        "company": "Example Company",
-        "position": "Project Manager",
-        "description": "Manage and oversee project execution.",
-        "highlights": ["Highlight 1", "Highlight 2"],
-    }
+    mock_request_data = FULL_PAYLOAD
 
-    response = client.post("/project/assist", json=mock_request_data)
+    response = client.post("/api/project/assist", json=mock_request_data)
 
     assert response.status_code == 200
     assert response.json() == ["Enhanced Highlight 1", "Enhanced Highlight 2"]
@@ -185,16 +270,14 @@ def test_assist_project(
     mock_retrieval_agent.retrieve.assert_called_once_with(
         indexer_txt="Example job summary", node_type="Project", refined_filter=False
     )
+
     mock_enhancer_agent.step.assert_any_call(
         {
-            "company": "Example Company",
-            "position": "Project Manager",
-            "description": "Manage and oversee project execution.",
-            "highlights": ["Highlight 1", "Highlight 2"],
-            "keywords": ["keyword1", "keyword2"],
+            "keywords": "['keyword1', 'keyword2']",
             "reference_chunks": "<Examples>\nHere are a list of examples of highlights that may be relevant to this job, use them as references points if necessary.\n\n----------\nExample 1: \n- Highlight 1\n- Highlight 2\n----------\nExample 2: \n- Highlight 3\n- Highlight 4\n\n</Examples>",
-            "previous_attempt": "Here is a previous attempt to improve this highlight that failed. Learn from the remark and try to create a bettern one if possible:\n<PreviousAttempt>\n- Enhanced Highlight 1\n- Enhanced Highlight 2\n</PreviousAttempt>\n\n<Remark>\nGood job!\n</Remark>",
-            "last_enhanced_version": ["Enhanced Highlight 1", "Enhanced Highlight 2"],
+            "previous_attempt": "Here is a previous attempt to improve this highlight that failed. Learn from the remark and try to create a bettern one if possible:\n<PreviousAttempt>\n- Enhanced Highlight 1\n- Enhanced Highlight 2\n</PreviousAttempt>\n\n<Remark>\nBad job!\n</Remark>",
+            "highlights": ["Highlight 1", "Highlight 2"],
+            "last_enhanced_version": "['Enhanced Highlight 1', 'Enhanced Highlight 2']",
         }
     )
     mock_reviewer_agent.review.assert_any_call(
@@ -202,7 +285,6 @@ def test_assist_project(
         ["Enhanced Highlight 1", "Enhanced Highlight 2"],
         "Company: Example Company\n----------\nRole: Project Manager\n----------\nJob Description: Manage and oversee project execution.",
     )
-
     mock_reviewer_agent.review.side_effect = [
         (4, "Bad job!"),
         (4, "Bad job!"),
@@ -210,7 +292,7 @@ def test_assist_project(
         (4, "worst job!"),
     ]
 
-    response = client.post("/project/assist", json=mock_request_data)
+    response = client.post("/api/project/assist", json=mock_request_data)
 
     assert response.status_code == 200
     assert response.json() == ["Enhanced Highlight 1", "Enhanced Highlight 2"]

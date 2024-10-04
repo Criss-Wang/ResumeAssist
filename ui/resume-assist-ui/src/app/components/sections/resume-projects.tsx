@@ -9,6 +9,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { Add, Edit, Delete } from '@mui/icons-material';
 import { green, blue, purple } from "@mui/material/colors"
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Projects({ onResumeChange, resume, job }) {
     const [projects, setProjects] = useState([]);
@@ -17,7 +18,8 @@ export default function Projects({ onResumeChange, resume, job }) {
   
     const handleAddProject = () => {
       const newId = projects.length + 1;
-      setProjects([...projects, { id: newId, projectName: '', startDate: null, endDate: null, url: '', current: false, highlights: [] }]);
+      const pId = uuidv4();
+      setProjects([...projects, { id: newId, pId: pId, projectName: '', startDate: null, endDate: null, url: '', current: false, highlights: [] }]);
     };
   
     const handleRemoveProject = (projectId) => {
@@ -55,13 +57,14 @@ export default function Projects({ onResumeChange, resume, job }) {
     const handleAssist = async (project) => {
       try {
           // Send a POST request to your backend
-          console.log(project);
+          const currHighlights = project.highlights.map(h => h.value);
+          console.log({ resume: resume, job_details: job, project: {...project, highlights: currHighlights} });
           const response = await fetch('/api/project/assist', {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json',
               },
-              body: JSON.stringify({ resume: resume, project: project }),
+              body: JSON.stringify({ resume: resume, job_details: job, project: {...project, highlights: currHighlights} }),
           });
           const results = await response.json();
           const updatedHighlights = results.map((r, idx) => { 
@@ -83,6 +86,7 @@ export default function Projects({ onResumeChange, resume, job }) {
       const projectPayload = projects.map(exp => {
         const map = {
           id: exp.id,
+          project_id: exp.pId,
           project_name: exp.projectName,
           start_date: dayjs(exp.startDate).format("MM/YYYY"),
           end_date: exp.endDate? dayjs(exp.endDate).format("MM/YYYY") : "",
@@ -94,7 +98,7 @@ export default function Projects({ onResumeChange, resume, job }) {
       });
       try {
         // Send a POST request to your backend
-        const response = await fetch(`/api/project/save/${resume.id}`, {
+        const response = await fetch(`/api/project/save`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

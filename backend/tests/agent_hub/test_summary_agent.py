@@ -47,7 +47,7 @@ def test_summary_agent_step(
     agent = SummaryAgent(task_name="self-intro", use_prompt=True, prompt_version=1)
 
     input_vars = {
-        "job_description": "Job description here",
+        "description": "Job description here",
         "skills": {"category1": ["skill1", "skill2"]},
         "work_experiences": [
             {
@@ -70,7 +70,7 @@ def test_summary_agent_step(
     result = agent.step(input_vars)
 
     updated_input_vars = {
-        "job_description": "Job description here\n\n",
+        "description": "Job description here\n\n",
         "skills": "Formatted Skills\n\n",
         "work_experiences": "Formatted Work\n\n",
         "project_experiences": "Formatted Projects\n\n",
@@ -97,7 +97,7 @@ def test_summary_agent_update_self_intro_inputs():
     agent = SummaryAgent(task_name="self-intro", use_prompt=True, prompt_version=1)
 
     input_vars = {
-        "job_description": "Job description here",
+        "description": "Job description here",
         "skills": {"category1": ["skill1", "skill2"]},
         "work_experiences": [
             {
@@ -132,10 +132,11 @@ def test_summary_agent_update_self_intro_inputs():
         updated_vars = agent.update_self_intro_inputs(input_vars)
 
         expected_vars = {
-            "job_description": "Job description here\n\n",
+            "description": "Job description here\n\n",
             "skills": "Formatted Skills\n\n",
             "work_experiences": "Formatted Work\n\n",
             "project_experiences": "Formatted Projects\n\n",
+            'word_limit': 100
         }
 
         assert updated_vars == expected_vars

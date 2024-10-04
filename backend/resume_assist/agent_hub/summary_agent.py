@@ -29,12 +29,12 @@ class SummaryAgent(Agent):
         return output
 
     def update_self_intro_inputs(self, input_vars: Dict):
-        assert "job_description" in input_vars
+        assert "description" in input_vars
         assert "skills" in input_vars
         assert "work_experiences" in input_vars
         assert "project_experiences" in input_vars
 
-        input_vars["job_description"] += "\n\n"
+        input_vars["description"] += "\n\n"
         input_vars["skills"] = build_skills_str(input_vars["skills"]) + "\n\n"
         input_vars["work_experiences"] = (
             build_work_str(input_vars["work_experiences"]) + "\n\n"
@@ -42,6 +42,7 @@ class SummaryAgent(Agent):
         input_vars["project_experiences"] = (
             build_project_str(input_vars["project_experiences"]) + "\n\n"
         )
+        input_vars["word_limit"] = 100
         return input_vars
 
     def get_agent_name(self):

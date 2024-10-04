@@ -9,6 +9,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { Add, Edit, Delete } from '@mui/icons-material';
 import { green, blue, purple } from "@mui/material/colors"
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Experiences({ onResumeChange, resume, job }) {
     const [experiences, setExperiences] = useState([]);
@@ -17,7 +18,8 @@ export default function Experiences({ onResumeChange, resume, job }) {
   
     const handleAddExperience = () => {
       const newId = experiences.length + 1;
-      setExperiences([...experiences, { id: newId, companyName: '', role: '', startDate: null, endDate: null, current: false, location: '', highlights: [] }]);
+      const wId = uuidv4();
+      setExperiences([...experiences, { id: newId, wId: wId, companyName: '', role: '', startDate: null, endDate: null, current: false, location: '', highlights: [] }]);
     };
   
     const handleRemoveExperience = (experienceId) => {
@@ -52,8 +54,7 @@ export default function Experiences({ onResumeChange, resume, job }) {
     };
 
 
-    const handleAssist = async () => {
-      console.log(resume, job, experiences);
+    const handleAssist = async (curr_work) => {
       try {
           // Send a POST request to your backend
           const response = await fetch('/work/assist', {
@@ -61,7 +62,7 @@ export default function Experiences({ onResumeChange, resume, job }) {
               headers: {
                   'Content-Type': 'application/json',
               },
-              body: JSON.stringify({ resume: resume }),
+              body: JSON.stringify({ resume: resume, job_details: job, work: {...curr_work, highlights: curr_work.highlights.map(h => h.value)} }),
           });
   
           if (!response.ok) {
@@ -76,6 +77,7 @@ export default function Experiences({ onResumeChange, resume, job }) {
       const work_body = experiences.map(exp => {
         const map = {
           id: exp.id,
+          work_id: exp.wId,
           company: exp.companyName,
           role: exp.role,
           location: exp.location,
@@ -88,7 +90,7 @@ export default function Experiences({ onResumeChange, resume, job }) {
       });
       try {
         // Send a POST request to your backend
-        const response = await fetch(`/api/work/save/${resume.id}`, {
+        const response = await fetch(`/api/work/save`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -400,7 +402,7 @@ export default function Experiences({ onResumeChange, resume, job }) {
                         },
                         ml: 2, // Add margin-left to create space between buttons
                       }}
-                      onClick={handleAssist}
+                      onClick={() => handleAssist(exp)}
                     >
                       Assist
                     </Button>

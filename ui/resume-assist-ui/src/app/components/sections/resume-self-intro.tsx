@@ -28,12 +28,13 @@ export default function SelfIntro({ onResumeChange, resume, job }) {
 
   const handleAssist = async () => {
     try {
+        console.log({ resume: { ...resume, job_details: job}, intro: selfIntro });
         const response = await fetch('/api/self-intro/assist', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ resume: { ...resume, job_details: job}, intro: selfIntro }), // 
+            body: JSON.stringify({ resume: { ...resume, job_details: job}, intro: selfIntro }),
         });
         const result = await response.json();
         setSelfIntro({ ...selfIntro, content: result });

@@ -1,11 +1,10 @@
 click==8.1.7
 fastapi==0.111.0
 openai~=1.24
-Markdown==3.5.1
 markdownify==0.11.6
 beautifulsoup4==4.12.2
 langchain==0.2.6
 langchain-anthropic==0.1.15
 neo4j==5.21.0
 voyageai==0.2.3
-rendercv==1.12
+rendercv==1.14

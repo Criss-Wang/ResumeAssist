@@ -1,5 +1,12 @@
+from enum import Enum
 from typing import List, Dict, Literal, Optional
 from pydantic import BaseModel, Field
+
+
+class Label(str, Enum):
+    SUCCESS = "success"
+    FAILURE = "failure"
+    PENDING = "pending"
 
 
 class AddonInfo(BaseModel):
@@ -14,6 +21,7 @@ class JobDetails(BaseModel):
 
 
 class Education(BaseModel):
+    education_id: str
     institution: str = Field(default="")
     area: str = Field(default="")
     degree: str = Field(default="")
@@ -26,6 +34,7 @@ class Education(BaseModel):
 
 
 class Research(BaseModel):
+    research_id: str
     title: str = Field(default="")
     authors: str = Field(default="")
     conference: str = Field(default="")
@@ -42,6 +51,7 @@ class PersonalInfo(BaseModel):
 
 
 class Project(BaseModel):
+    project_id: str
     project_name: str
     start_date: str
     end_date: str
@@ -61,6 +71,7 @@ class Skills(BaseModel):
 
 
 class Work(BaseModel):
+    work_id: str
     company: str
     location: str
     role: str
@@ -79,7 +90,8 @@ class Resume(BaseModel):
     skills: Skills
     work: List[Work]
     projects: List[Project]
-    addtional_info: Optional[AddonInfo] = Field(default={})
+    addtional_info: Optional[AddonInfo] = Field(default=None)
+    label: Label
 
 
 class ResumeRequest(BaseModel):
@@ -87,4 +99,5 @@ class ResumeRequest(BaseModel):
     work_ids: List[str]
     project_ids: List[str]
     label: Literal["success", "fail", "unlabeled"] = Field(
-        default="unlabeled", description="outcome of the application using this resume")
+        default="unlabeled", description="outcome of the application using this resume"
+    )

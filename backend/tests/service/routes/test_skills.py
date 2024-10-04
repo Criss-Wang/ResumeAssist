@@ -45,7 +45,7 @@ def test_save_skills(client, mock_neo4j_client):
         "categories": ["Category1", "Category2"],
         "skill_mapping": {"Category1": ["s1", "s2"], "Category2": ["s1", "s2"]},
     }
-    response = client.post(f"/skills/{test_id}/save", json=test_data)
+    response = client.post(f"/api/skills/save/{test_id}", json=test_data)
 
     assert response.status_code == 200
     assert mock_neo4j_client.query.called
@@ -62,7 +62,7 @@ def test_get_skills(client, mock_neo4j_client):
     }
     mock_neo4j_client.query.return_value = [{"sk": test_data}]
 
-    response = client.get(f"/skills/{test_id}")
+    response = client.get(f"/api/skills/{test_id}")
     assert response.status_code == 200
     print(response.json())
     assert response.json()["skill_mapping"]["Category1"] == ["s1", "s2"]
@@ -74,30 +74,106 @@ def test_assist_skills(client, mock_enhancer_agent):
     mock_enhancer_agent.step.return_value = return_value
 
     test_data = {
-        "company": "some company",
-        "role": "some role",
-        "job_description": "some job description",
-        "skills": {"category 1": ["s1", "s2"], "category 2": ["s1", "s2"]},
-        "work_experiences": [
+        "resume": {
+            "id": "b9641efd-6b3a-4090-9be4-9916f40666f7",
+            "job_details": {},
+            "personal_info": {
+                "name": "fda",
+                "email": "fdsafas",
+                "linkedin": "fdsa",
+                "github": "fdsa",
+                "phone": "fdsa",
+                "website": "fdsa"
+            },
+            "researches": [
+                {
+                    "title": "fdsa",
+                    "authors": "fdsafsa",
+                    "conference": "fdsa",
+                    "date": "08/2024"
+                }
+            ],
+            "educations": [
+                {
+                    "institution": "fda",
+                    "area": "fdsafsadf",
+                    "degree": "dadsafdsaf",
+                    "current": True,
+                    "gpa": "fdsafdsa",
+                    "courses": "fdafsaf",
+                    "other": "fdsafas;fdsafdsafafdsa",
+                    "start_date": "07/2024",
+                    "end_date": ""
+                }
+            ],
+            "self_intro": {
+                "content": "fdafdsafds",
+                "title": "fdsa-fdas"
+            },
+            "skills": {
+                "categories": [
+                    "New Category 1"
+                ],
+                "skill_mapping": {
+                    "New Category 1": [
+                        "New Skill 1",
+                        "New Skill 2"
+                    ]
+                }
+            },
+            "work": [
+                {
+                    "id": 1,
+                    "company": "fdsa",
+                    "role": "df",
+                    "location": "fdafsa",
+                    "start_date": "01/2024",
+                    "end_date": "08/2024",
+                    "current": False,
+                    "highlights": [
+                        "new highlight"
+                    ]
+                }
+            ],
+            "projects": [
+                {
+                    "id": 1,
+                    "project_name": "llm-benchmark",
+                    "start_date": "Invalid Date",
+                    "end_date": "",
+                    "url": "fdsafsa",
+                    "current": True,
+                    "highlights": [
+                        "new highlight"
+                    ]
+                }
+            ],
+            "additional_info": {}
+        },
+        "job": {
+            "position": "fdas",
+            "company": "fdsa",
+            "url": "fdas",
+            "description": "fasfdsadf"
+        },
+        "categories": [
             {
-                "work_company": "some work company",
-                "start_date": "a start_date",
-                "end_date": "a end_date",
-                "work_role": "some work role",
-                "highlights": ["highlight 1", "highlight 2", "highlight 3"],
+                "name": "New Category 1",
+                "skills": [
+                    {
+                        "name": "New Skill 1",
+                        "catName": "New Category 1"
+                    },
+                    {
+                        "name": "New Skill 2",
+                        "catName": "New Category 1"
+                    }
+                ]
             }
-        ],
-        "project_experiences": [
-            {
-                "project_name": "a project_name",
-                "start_date": "a start_date",
-                "end_date": "a end_date",
-                "highlights": ["highlights 1", "highlights 2", "highlights 3"],
-            }
-        ],
+        ]
     }
 
-    response = client.post("/skills/assist", json=test_data)
+    response = client.post("/api/skills/assist", json=test_data)
 
     assert response.status_code == 200
     assert response.json() == return_value

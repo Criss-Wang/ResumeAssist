@@ -1,10 +1,9 @@
-import json
-from typing import List, Dict, Any
+from typing import List
 
 from fastapi import APIRouter, HTTPException, Request, Response
 from uuid import UUID
 
-from resume_assist.service.rest.data_model.resume_model import Resume, Intro
+from resume_assist.service.rest.data_model.resume_model import Intro
 from resume_assist.io.db.engine import neo4j_client
 from resume_assist.agent_hub.summary_agent import SummaryAgent
 
@@ -38,38 +37,37 @@ async def assist_self_intro(request: Request):
     try:
         agent = SummaryAgent("self-intro")
         info_vars = await request.json()
-        # info_vars = json.loads(info_vars)
-        print(info_vars)
-        info_vars = {
-            "title": info_vars['intro']['title'],
-            "content": info_vars['intro']['content']
-        }
-        # ai_assisted_intro = agent.step(info_vars)
-        # return ai_assisted_intro
-        return "sample answer"
+
+        intro_vars: dict = {}
+        intro_vars.update(**info_vars["intro"])
+        intro_vars.update(**info_vars["resume"]["job_details"])
+        intro_vars["skills"] = info_vars["resume"]["skills"]
+        intro_vars["work_experiences"] = info_vars["resume"]["work"]
+        intro_vars["project_experiences"] = info_vars["resume"]["projects"]
+        ai_assisted_intro = agent.step(intro_vars)
+        return ai_assisted_intro
     except Exception as e:
-        # logger.exception(e)
         print(e)
         raise HTTPException(500, "Unexpected error")
 
 
-@self_intro_router.post("/{id}", response_model=Intro)
-def get_self_intro(id: UUID):
-    try:
-        query = """
-        MATCH (si:SelfIntro {id: $id})
-        RETURN si
-        """
-        parameters = {"id": str(id)}
-        result = neo4j_client.query(query, parameters)
-        if not result:
-            raise HTTPException(404, "Self Introduction not found")
-        self_intro = result[0]["si"]
-        return Intro(**self_intro)
-    except Exception as e:
-        # logger.exception(e)
-        print(e)
-        raise HTTPException(500, "Unexpected error")
+# @self_intro_router.post("/{id}", response_model=Intro)
+# def get_self_intro(id: UUID):
+#     try:
+#         query = """
+#         MATCH (si:SelfIntro {id: $id})
+#         RETURN si
+#         """
+#         parameters = {"id": str(id)}
+#         result = neo4j_client.query(query, parameters)
+#         if not result:
+#             raise HTTPException(404, "Self Introduction not found")
+#         self_intro = result[0]["si"]
+#         return Intro(**self_intro)
+#     except Exception as e:
+#         # logger.exception(e)
+#         print(e)
+#         raise HTTPException(500, "Unexpected error")
 
 
 @self_intro_router.get("/all", response_model=List[Intro])
@@ -80,7 +78,7 @@ def get_self_intro_all():
         RETURN si
         """
         result = neo4j_client.query(query)
-        if not result:
+        if not result:  # pragma: no cover
             print("no existing self intro, check your database")
         # Convert the result to a list of Intro objects
         self_intros = [Intro(**record["si"]) for record in result]
