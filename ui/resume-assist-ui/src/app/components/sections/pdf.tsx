@@ -1,27 +1,11 @@
-import React from 'react';
+'use client';
+import { useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
 export default function PDFSection({ resume, job }) {
-    // const refreshPDF = async () => {
-    //     try {
-    //         // Send a POST request to your backend
-    //         const response = await fetch('/api/pdf/render', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({ ...resume }), // Replace with your payload if needed
-    //         });
-
-    //         if (!response.ok) {
-    //             throw new Error('Network response was not ok');
-    //         }
-    //     } catch (error) {
-    //         console.error('Failed to refresh PDF:', error);
-    //     }
-    // };
-
+    const [pdfPath, setPdfPath] = useState("");
+    const [pdfKey, setPdfKey] = useState(1);
     const saveResume = async () => {
         try {
             console.log({ ...resume, job_details: job});
@@ -33,16 +17,16 @@ export default function PDFSection({ resume, job }) {
                 },
                 body: JSON.stringify({ ...resume, job_details: job}),
             });
-      
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-          } catch (error) {
+            setPdfKey(-1 * pdfKey);
+            setPdfPath(`/pdf/${resume.personal_info.name.replace(" ", "")}_Resume.pdf`);
+        }   catch (error) {
               console.error('Failed to refresh PDF:', error);
-          }
+        }
     };
 
-    const pdfPath = '/pdf/cv.pdf';
     return (
         <Box className="mb-6">
             <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -67,7 +51,7 @@ export default function PDFSection({ resume, job }) {
                 </Box>
             </Box>
             <Box mt={4}>
-                <object className="min-w-full" height="1200" data={pdfPath} type="application/pdf">
+                <object className="min-w-full" height="1200" data={pdfPath} key={pdfKey} type="application/pdf">
                     
                 </object>
             </Box>
