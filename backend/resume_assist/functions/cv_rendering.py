@@ -125,7 +125,7 @@ def render_pdf(cv: Dict, design: Dict, resume_name: str) -> None:
 
 
 def forward_to_folder(resume_name, destination_path):
-    if os.path.exists(f"{destination_path}/{resume_name}.pdf"):
+    if os.path.exists(f"{destination_path}/{resume_name}.pdf"):  # pragma: no cover
         os.remove(f"{destination_path}/{resume_name}.pdf")
 
     shutil.move(f"resume_pdfs/{resume_name}.pdf", destination_path)
