@@ -8,6 +8,7 @@ import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import AddIcon from '@mui/icons-material/Add';
 import { Edit, Delete } from '@mui/icons-material';
 import { green, purple } from "@mui/material/colors"
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Researches({ onResumeChange, resume }) {
     const [researches, setResearchs] = useState([]);
@@ -15,7 +16,8 @@ export default function Researches({ onResumeChange, resume }) {
   
     const handleAddResearch = () => {
       const newId = researches.length + 1;
-      setResearchs([...researches, { id: newId, title: '', authors: '', conference: '', date: null }]);
+      const rId = uuidv4();
+      setResearchs([...researches, { id: newId, rId: rId, title: '', authors: '', conference: '', date: null }]);
     };
   
     const handleRemoveResearch = (researchId) => {
@@ -35,6 +37,7 @@ export default function Researches({ onResumeChange, resume }) {
     const handleSaveAll = async () => {
       const researches_body = researches.map(exp => {
         const map = {
+          research_id: exp.rId,
           title: exp.title,
           authors: exp.authors,
           conference: exp.conference,
@@ -45,7 +48,7 @@ export default function Researches({ onResumeChange, resume }) {
       // Call the API to save the education data
       try {
         // Send a POST request to your backend
-        const response = await fetch(`/api/research/save/${resume.id}`, {
+        const response = await fetch(`/api/research/save`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -204,7 +207,7 @@ export default function Researches({ onResumeChange, resume }) {
                     <TextField
                     variant="outlined"
                     size="small"
-                    label="Authors"
+                    label='Authors [split by ";" sign]'
                     value={exp.authors}
                     disabled={editResearchMode?.researchId !== exp.id}
                     fullWidth
