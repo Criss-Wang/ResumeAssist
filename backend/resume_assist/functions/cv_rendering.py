@@ -1,5 +1,6 @@
 import os
 import yaml
+import shutil
 from typing import Dict
 
 
@@ -59,7 +60,7 @@ DEFAULT_LOCAL_CATALOG = {
     "year": "year",
     "years": "years",
     "present": "present",
-    "to": "to",
+    "to": "-",
 }
 
 
@@ -121,3 +122,10 @@ def render_pdf(cv: Dict, design: Dict, resume_name: str) -> None:
         os.system("rm -rf outputs")
     except Exception as e:
         print(e)
+
+
+def forward_to_folder(resume_name, destination_path):
+    if os.path.exists(f"{destination_path}/{resume_name}.pdf"):
+        os.remove(f"{destination_path}/{resume_name}.pdf")
+
+    shutil.move(f"resume_pdfs/{resume_name}.pdf", destination_path)
