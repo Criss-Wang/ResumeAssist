@@ -1,5 +1,12 @@
+from enum import Enum
 from typing import List, Dict, Literal, Optional
 from pydantic import BaseModel, Field
+
+
+class Label(str, Enum):
+    SUCCESS = "success"
+    FAILURE = "failure"
+    PENDING = "pending"
 
 
 class AddonInfo(BaseModel):
@@ -83,7 +90,8 @@ class Resume(BaseModel):
     skills: Skills
     work: List[Work]
     projects: List[Project]
-    addtional_info: Optional[AddonInfo] = Field(default={})
+    addtional_info: Optional[AddonInfo] = Field(default=None)
+    label: Label
 
 
 class ResumeRequest(BaseModel):
