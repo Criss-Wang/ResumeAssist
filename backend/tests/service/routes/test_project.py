@@ -273,11 +273,11 @@ def test_assist_project(
 
     mock_enhancer_agent.step.assert_any_call(
         {
-            "keywords": ["keyword1", "keyword2"],
+            "keywords": "['keyword1', 'keyword2']",
             "reference_chunks": "<Examples>\nHere are a list of examples of highlights that may be relevant to this job, use them as references points if necessary.\n\n----------\nExample 1: \n- Highlight 1\n- Highlight 2\n----------\nExample 2: \n- Highlight 3\n- Highlight 4\n\n</Examples>",
             "previous_attempt": "Here is a previous attempt to improve this highlight that failed. Learn from the remark and try to create a bettern one if possible:\n<PreviousAttempt>\n- Enhanced Highlight 1\n- Enhanced Highlight 2\n</PreviousAttempt>\n\n<Remark>\nBad job!\n</Remark>",
             "highlights": ["Highlight 1", "Highlight 2"],
-            "last_enhanced_version": ["Enhanced Highlight 1", "Enhanced Highlight 2"],
+            "last_enhanced_version": "['Enhanced Highlight 1', 'Enhanced Highlight 2']",
         }
     )
     mock_reviewer_agent.review.assert_any_call(

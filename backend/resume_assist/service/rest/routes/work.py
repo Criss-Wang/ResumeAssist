@@ -97,7 +97,7 @@ async def assist_work_experience(request: Request):
         )
 
         enhancement_info = {}
-        enhancement_info["keywords"] = "; ".join(
+        enhancement_info["keywords"] = str(
             keyword_agent.extract_keywords(job_description)
         )
         enhancement_info["reference_chunks"] = build_reference_chunks_str(
