@@ -52,7 +52,7 @@ def test_get_self_intro(client, mock_neo4j_client):
     test_data = {"title": "test title", "content": "Introduction Content"}
     mock_neo4j_client.query.return_value = [{"si": test_data}]
 
-    response = client.get(f"/api/self-intro/all")
+    response = client.get("/api/self-intro/all")
 
     assert response.status_code == 200
     assert response.json() == [test_data]
@@ -71,7 +71,7 @@ def test_assist_self_intro(client, mock_summary_agent):
                 "position": "fdas",
                 "company": "fdsa",
                 "url": "fdas",
-                "description": "fasfdsadf"
+                "description": "fasfdsadf",
             },
             "personal_info": {
                 "name": "fda",
@@ -79,14 +79,14 @@ def test_assist_self_intro(client, mock_summary_agent):
                 "linkedin": "fdsa",
                 "github": "fdsa",
                 "phone": "fdsa",
-                "website": "fdsa"
+                "website": "fdsa",
             },
             "researches": [
                 {
                     "title": "fdsa",
                     "authors": "fdsafsa",
                     "conference": "fdsa",
-                    "date": "08/2024"
+                    "date": "08/2024",
                 }
             ],
             "educations": [
@@ -99,23 +99,13 @@ def test_assist_self_intro(client, mock_summary_agent):
                     "courses": "fdafsaf",
                     "other": "fdsafas;fdsafdsafafdsa",
                     "start_date": "07/2024",
-                    "end_date": ""
+                    "end_date": "",
                 }
             ],
-            "self_intro": {
-                "content": "fdafdsafds",
-                "title": "fdsa-fdas"
-            },
+            "self_intro": {"content": "fdafdsafds", "title": "fdsa-fdas"},
             "skills": {
-                "categories": [
-                    "New Category 1"
-                ],
-                "skill_mapping": {
-                    "New Category 1": [
-                        "New Skill 1",
-                        "New Skill 2"
-                    ]
-                }
+                "categories": ["New Category 1"],
+                "skill_mapping": {"New Category 1": ["New Skill 1", "New Skill 2"]},
             },
             "work": [
                 {
@@ -126,9 +116,7 @@ def test_assist_self_intro(client, mock_summary_agent):
                     "start_date": "01/2024",
                     "end_date": "08/2024",
                     "current": False,
-                    "highlights": [
-                        "new highlight"
-                    ]
+                    "highlights": ["new highlight"],
                 }
             ],
             "projects": [
@@ -139,17 +127,12 @@ def test_assist_self_intro(client, mock_summary_agent):
                     "end_date": "",
                     "url": "fdsafsa",
                     "current": True,
-                    "highlights": [
-                        "new highlight"
-                    ]
+                    "highlights": ["new highlight"],
                 }
             ],
-            "additional_info": {}
+            "additional_info": {},
         },
-        "intro": {
-            "content": "fdafdsafds",
-            "title": "fdsa-fdas"
-        }
+        "intro": {"content": "fdafdsafds", "title": "fdsa-fdas"},
     }
 
     response = client.post("/api/self-intro/assist", json=test_data)

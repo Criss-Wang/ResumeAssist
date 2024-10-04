@@ -57,7 +57,7 @@ def test_save_educations(client, mock_neo4j_client):
             "other": "other",
         }
     ]
-    response = client.post(f"/api/education/save", json=test_data)
+    response = client.post("/api/education/save", json=test_data)
 
     assert response.status_code == 200
     assert mock_neo4j_client.query.called
@@ -80,7 +80,7 @@ def test_get_education(client, mock_neo4j_client):
     }
     mock_neo4j_client.query.return_value = [{"edu": test_data}]
 
-    response = client.get(f"/api/education/all")
+    response = client.get("/api/education/all")
 
     assert response.status_code == 200
     assert response.json() == [test_data]

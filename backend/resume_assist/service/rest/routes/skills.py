@@ -63,7 +63,7 @@ async def assist_skills(request: Request):
         agent = EnhancerAgent("skills")
         info_vars = await request.json()
 
-        skills_vars = {}
+        skills_vars: dict = {}
         skills_vars.update(**info_vars["job"])
         skills_vars["skills"] = parse_skills_payload(info_vars["categories"])
         skills_vars["work_experiences"] = info_vars["resume"]["work"]

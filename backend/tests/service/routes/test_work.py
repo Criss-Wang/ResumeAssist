@@ -192,7 +192,7 @@ def test_get_work_experience(mock_neo4j_client, client):
         }
     ]
 
-    response = client.get("/api/work/all".format(id=uuid4()))
+    response = client.get("/api/work/all")
 
     assert response.status_code == 200
     assert response.json()[0]["company"] == "Test Company"

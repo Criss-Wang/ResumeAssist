@@ -190,7 +190,7 @@ def test_save_project(client, mock_neo4j_client):
             "highlights": ["Achievement 1", "Achievement 2"],
         }
     ]
-    response = client.post(f"/api/project/save", json=test_data)
+    response = client.post("/api/project/save", json=test_data)
 
     assert response.status_code == 200
     assert mock_neo4j_client.query.called
@@ -211,7 +211,7 @@ def test_get_project(client, mock_neo4j_client):
 
     mock_neo4j_client.query.return_value = [{"pr": test_data}]
 
-    response = client.get(f"/api/project/all")
+    response = client.get("/api/project/all")
 
     assert response.status_code == 200
     assert response.json() == [test_data]

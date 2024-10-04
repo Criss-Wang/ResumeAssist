@@ -46,7 +46,7 @@ def test_save_research(client, mock_neo4j_client):
             "date": "Test date",
         }
     ]
-    response = client.post(f"/api/research/save", json=test_data)
+    response = client.post("/api/research/save", json=test_data)
 
     assert response.status_code == 200
     assert mock_neo4j_client.query.called
@@ -64,7 +64,7 @@ def test_get_research(client, mock_neo4j_client):
     }
     mock_neo4j_client.query.return_value = [{"resea": test_data}]
 
-    response = client.get(f"/api/research/all")
+    response = client.get("/api/research/all")
 
     assert response.status_code == 200
     assert response.json() == [test_data]
