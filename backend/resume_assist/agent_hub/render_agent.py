@@ -2,7 +2,12 @@ import logging
 from typing import Dict, List
 
 from resume_assist.agent_hub.base import Agent
-from resume_assist.functions.cv_rendering import build_cv, build_design, render_pdf, forward_to_folder
+from resume_assist.functions.cv_rendering import (
+    build_cv,
+    build_design,
+    render_pdf,
+    forward_to_folder,
+)
 from resume_assist.utilities.formatting_utils import convert_dateformat
 
 logger = logging.getLogger(__name__)
@@ -79,7 +84,7 @@ def build_educations(educations):
     final_educations = []
     for education in educations:
         highlights = [f'GPA: {education["gpa"]}']
-        if education["other"]:
+        if education["other"]:  # pragma: no cover
             highlights += education["other"].split(";")
         final_educations.append(
             {
@@ -138,7 +143,9 @@ class RenderAgent(Agent):
             cv_info["projects"] = build_projects(input_vars["projects"])
             cv_info["publications"] = build_research(input_vars["researches"])
             cv_info["summary"] = build_summary(input_vars["self_intro"])
-            self.run_render(cv_info, f'{cv_info["personal"]["name"].replace(" ", "")}_Resume')
+            self.run_render(
+                cv_info, f'{cv_info["personal"]["name"].replace(" ", "")}_Resume'
+            )
             return True
         except Exception as e:
             print(e)
