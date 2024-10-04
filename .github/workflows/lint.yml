@@ -26,4 +26,5 @@ jobs:
       - name: Run mypy 
         run: |
           cd backend
+          pip install types-PyYAML
           mypy resume_assist
