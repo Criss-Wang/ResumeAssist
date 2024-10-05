@@ -55,9 +55,14 @@ Prototyping... So far you may refer to the following:
 - Unit Testing
 - Linting
 - Neo4j connection
-### In progress
-- CV Rendering
+- - CV Rendering
 - Integration (Frontend & Backend)
+
+### In progress
+- Multiple
+- LLM Observability (online evaluation with langfuse & deepeval)
+- GraphRAG
+
 ### Planned
 - Make UI look better
 - Ollama based LangChain engines (True unlimited use)
