@@ -1,0 +1,13 @@
+Subject: IT Setup Instructions
+Welcome to ComputeCore, Rod!
+To ensure you have everything you need on your first day, please follow these IT setup instructions:
+Account Setup:
+Your company email: rod.welsh@computecore.com
+Temporary password: ComputeCore1234! Please change this on your first login.
+Software Installation:
+Access the software download portal at computecore.com/software to install necessary applications (e.g., Slack, Zoom).
+VPN Access:
+If you’ll be working remotely, set up the VPN by following the instructions in the IT manual at computecore.com/itmanual.
+Support: For any IT issues, contact the IT helpdesk at it-support@computecore.com.
+Best,
+IT

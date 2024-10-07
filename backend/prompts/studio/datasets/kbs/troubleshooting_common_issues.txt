@@ -1,0 +1,8 @@
+Troubleshooting Common Issues
+Quick Fixes for Common Computer Problems at ComputeCore Systems
+Every employee may encounter technical issues. Here are some common problems and quick solutions:
+Slow Computer Performance: Close unused applications and tabs. Regularly clear cache and temporary files to free up resources.
+Connectivity Issues: If experiencing network problems, check if the Wi-Fi is connected. Restart the router and reconnect your device if necessary.
+Software Crashes: If an application crashes, try restarting it. If the issue persists, check for updates or consult IT support.
+Printer Problems: Ensure the printer is powered on and connected. If print jobs are stuck, restart the printer and try again.
+Familiarizing yourself with these troubleshooting steps can save time and reduce frustration.

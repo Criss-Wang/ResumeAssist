@@ -1,9 +1,6 @@
 TODO:
 1. Prompt Studio (with good UI) for personalized prompts: https://github.com/anthropics/prompt-eng-interactive-tutorial/blob/master/Anthropic%201P/09_Complex_Prompts_from_Scratch.ipynb
 2. Agent-based architecture
-    ReviewerAgent
-    KeywordExtractorAgent
-    RetrievalAgent
         - configurable voyage ai embedding
         - advanced retrieval setting: https://neo4j.com/developer-blog/advanced-rag-strategies-neo4j/?utm_source=Google&utm_medium=PaidSearch&utm_campaign=Evergreen&utm_content=AMS-Search-SEMCE-DSA-None-SEM-SEM-NonABM&utm_term=&utm_adgroup=DSA&gad_source=1&gclid=Cj0KCQjw1qO0BhDwARIsANfnkv9m8jLeuv0b2Ny0PEFPZQLvg3Hkr6uRrCz5zKDgyhj91Jeq7QjaZLQaAtfXEALw_wcB
     FormatterAgent
@@ -22,3 +19,7 @@ Steps:
 
 TODO:
 - Fix id-bugs --> Self-Introduction (resume.id should be matching with current job)
+- Implement GraphRAG
+- Implement MemGPT
+- Multiple models
+- LLM Observability (online evaluation with langfuse & deepeval)

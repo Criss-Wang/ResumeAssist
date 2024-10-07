@@ -1,0 +1,7 @@
+deepeval==1.3.2
+pandas==2.2.3
+python-dotenv==1.0.1
+numpy==2.1.1
+tqdm==4.66.5
+textgrad==0.1.5
+click~=8.1.7

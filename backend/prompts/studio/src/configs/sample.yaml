@@ -1,0 +1,5 @@
+eval_engine_name: gpt-4o
+test_engine_name: gpt-3.5-turbo-0125
+dataset: sample
+fn_purpose: The runtime of string-based function that checks if the answer to thq query is of high quality.
+task: sample

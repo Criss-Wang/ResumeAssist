@@ -1,0 +1,8 @@
+Best Practices for Computer Security
+Ensuring Computer Security at ComputeCore Systems
+Security is a top priority at ComputeCore Systems. Here are best practices to follow for maintaining a secure computing environment:
+Use Strong Passwords: Create complex passwords that include a mix of letters, numbers, and symbols. Change them regularly and avoid sharing them.
+Enable Two-Factor Authentication (2FA): Protect your accounts by enabling 2FA wherever possible, adding an extra layer of security.
+Regular Software Updates: Keep your operating system and applications up to date to protect against vulnerabilities.
+Beware of Phishing Attempts: Be cautious with unsolicited emails and messages. Do not click on links or download attachments from unknown sources.
+Following these practices helps protect both your data and the company’s sensitive information.
