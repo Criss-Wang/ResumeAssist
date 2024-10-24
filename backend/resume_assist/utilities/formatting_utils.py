@@ -1,4 +1,4 @@
-from typing import List, Dict, Tuple, Any, Callable
+from typing import List, Dict, Tuple, Any, Callable, Iterable
 
 
 def parse_grading_details(text: str) -> Tuple[int, str]:
@@ -52,6 +52,10 @@ def build_skills_str(skills: Dict[str, List]) -> str:
 def build_work_str(work: List) -> str:
     work_list = []
     for w in work:
+        if "company" in w:
+            w["work_company"] = w["company"]
+        if "role" in w:
+            w["work_role"] = w["role"]
         work_str = ""
         work_str += f'work company: {w["work_company"]}\n'
         work_str += f'work role: {w["work_role"]}\n'
@@ -77,6 +81,8 @@ def build_project_str(projects: List) -> str:
 
 
 def build_highlight_str(chunk: Any) -> str:
+    if isinstance(chunk, Iterable) and not isinstance(chunk, Dict):  # pragma: no cover
+        chunk = chunk[0]
     return "\n".join(["- " + highlight for highlight in chunk.get("highlights")])
 
 

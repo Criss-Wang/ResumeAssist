@@ -3,6 +3,15 @@ from unittest.mock import patch, MagicMock
 from resume_assist.engines.anthropic_engine import AnthropicEngine
 
 
+def test_real_run():
+    model_params = {}
+    model_name = "claude-3-5-sonnet-20240620"
+    engine = AnthropicEngine(model_params, model_name)
+
+    messages = [("user", "Hello"), ("assistant", "Hi there")]
+    response = engine.run_instruction(messages)
+
+
 @patch("resume_assist.engines.anthropic_engine.ChatAnthropic")
 def test_anthropic_engine_init(mock_chat_anthropic):
     model_params = {"param1": "value1"}
